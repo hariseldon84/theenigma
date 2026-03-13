@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enigma — Action Sphere</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --cerulean: #00A3FF;
+      --cerulean-dim: rgba(0, 163, 255, 0.25);
+      --text: #e5e5e5;
+      --text-muted: rgba(229, 229, 229, 0.6);
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 6rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    .sphere-header {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .sphere-header h1 {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .sphere-header .sign-out {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .sphere-header .sign-out:hover { color: var(--cerulean); }
+    .orb-wrap {
+      margin: 1rem 0 2rem;
+    }
+    .orb {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--cerulean-dim), transparent 60%),
+                  var(--glass);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 0 40px var(--cerulean-dim), inset 0 0 30px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .orb:hover { box-shadow: 0 0 50px var(--cerulean-dim), inset 0 0 30px rgba(0, 0, 0, 0.3); }
+    .orb:active { transform: scale(0.97); }
+    .orb .orb-inner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--cerulean);
+      opacity: 0.9;
+      box-shadow: 0 0 20px var(--cerulean);
+    }
+    .orb-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .feed {
+      width: 100%;
+      max-width: 420px;
+    }
+    .feed-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      padding-left: 0.25rem;
+    }
+    .feed-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .feed-item {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 0.6rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: opacity 0.3s ease;
+    }
+    .feed-item.fade { opacity: 0.5; }
+    .feed-item .context {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--cerulean);
+      margin-bottom: 0.35rem;
+    }
+    .feed-item .content {
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: var(--text);
+    }
+    .feed-item .tag {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .feed-empty {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .feed-error {
+      text-align: center;
+      padding: 1rem;
+      color: #f66;
+      font-size: 0.85rem;
+    }
+    .life-query-panel {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 5, 0.95);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      z-index: 100;
+      padding: 1.5rem 1rem 2rem;
+      overflow-y: auto;
+    }
+    .life-query-panel.show { display: flex; }
+    .life-query-panel .lq-header {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .life-query-panel .lq-header h2 {
+      font-size: 1rem;
+      margin: 0;
+      color: var(--cerulean);
+    }
+    .life-query-panel .lq-close {
+      padding: 0.4rem 0.8rem;
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .life-query-panel .lq-form {
+      width: 100%;
+      max-width: 400px;
+    }
+    .life-query-panel .lq-input-wrap {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .life-query-panel .lq-input {
+      flex: 1;
+      min-height: 44px;
+      padding: 0.6rem 0.75rem;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+      resize: none;
+    }
+    .life-query-panel .lq-input::placeholder { color: var(--text-muted); }
+    .life-query-panel .lq-ask-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .life-query-panel .lq-ask-btn {
+      padding: 0.5rem 1rem;
+      background: var(--cerulean);
+      color: #050505;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .life-query-panel .lq-ask-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .life-query-panel .lq-voice-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      color: var(--cerulean);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .life-query-panel .lq-voice-btn.recording { background: rgba(229, 57, 53, 0.3); color: #fff; }
+    .life-query-panel .lq-voice-btn svg { width: 22px; height: 22px; }
+    .life-query-panel .lq-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      min-height: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .life-query-panel .lq-status.error { color: #f66; }
+    .life-query-panel .lq-answer-card {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 0.5rem;
+      padding: 1rem 1.1rem;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .life-query-panel .lq-answer-card .lq-question {
+      font-size: 0.8rem;
+      color: var(--cerulean);
+      margin-bottom: 0.5rem;
+    }
+    .audio-fab {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: var(--cerulean);
+      color: #050505;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px var(--cerulean-dim);
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+    .audio-fab:hover { transform: scale(1.05); box-shadow: 0 6px 24px var(--cerulean-dim); }
+    .audio-fab svg { width: 24px; height: 24px; }
+    .audio-fab.recording {
+      background: #e53935;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    @keyframes pulse { 50% { opacity: 0.9; } }
+    .capture-panel {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 5, 0.96);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+    .capture-panel.show { display: flex; }
+    .capture-panel .mode-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+    }
+    .capture-panel .mode-toggle button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .capture-panel .mode-toggle button.active { background: var(--cerulean-dim); color: var(--cerulean); }
+    .capture-panel .mic-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      color: var(--cerulean);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .capture-panel .mic-btn.recording { background: rgba(229, 57, 53, 0.3); color: #fff; }
+    .capture-panel .mic-btn svg { width: 36px; height: 36px; }
+    .capture-panel .status { font-size: 0.85rem; color: var(--text-muted); text-align: center; max-width: 280px; }
+    .capture-panel .status.success { color: #4caf50; }
+    .capture-panel .status.error { color: #f66; }
+    .capture-panel .close-capture {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="sphere-header">
+    <h1>Action Sphere</h1>
+    <a href="#" id="sign-out" class="sign-out" style="display: none;">Sign out</a>
+  </div>
+  <div class="orb-wrap">
+    <button type="button" class="orb" id="orb" aria-label="Tap for commitments, long-press for Life Query">
+      <span class="orb-inner"></span>
+    </button>
+    <p class="orb-hint" id="orb-hint">Tap · Open Commitments · Long-press · Life Query</p>
+  </div>
+  <section class="feed" aria-label="Open Commitments">
+    <h2 class="feed-title">Open Commitments</h2>
+    <div class="feed-error" id="feed-error" style="display: none;"></div>
+    <div class="feed-empty" id="feed-empty" style="display: none;">No open commitments.</div>
+    <ul class="feed-list" id="feed-list"></ul>
+  </section>
+
+  <div class="life-query-panel" id="life-query" aria-hidden="true">
+    <div class="lq-header">
+      <h2>Life Query</h2>
+      <button type="button" class="lq-close" id="close-life-query">Close</button>
+    </div>
+    <div class="lq-form">
+      <div class="lq-input-wrap">
+        <textarea class="lq-input" id="lq-input" rows="2" placeholder="Ask anything from your Nexus + commitments…"></textarea>
+      </div>
+      <div class="lq-ask-row">
+        <button type="button" class="lq-ask-btn" id="lq-ask-btn">Ask</button>
+        <button type="button" class="lq-voice-btn" id="lq-voice-btn" aria-label="Ask by voice">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+        </button>
+      </div>
+      <p class="lq-status" id="lq-status"></p>
+      <div class="lq-answer-card" id="lq-answer-card" style="display: none;"></div>
+    </div>
+  </div>
+
+  <div class="capture-panel" id="capture-panel" aria-hidden="true">
+    <div class="mode-toggle" role="group">
+      <button type="button" id="mode-commitment" class="active">Commitment</button>
+      <button type="button" id="mode-people">People context</button>
+      <button type="button" id="mode-thought">Thought</button>
+    </div>
+    <button type="button" class="mic-btn" id="mic" aria-label="Record">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+      </svg>
+    </button>
+    <p class="status" id="capture-status">Tap mic to record, tap again to send</p>
+    <button type="button" class="close-capture" id="close-capture">Close</button>
+  </div>
+
+  <button type="button" class="audio-fab" id="audio-fab" aria-label="Record commitment or people context">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+      <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+    </svg>
+  </button>
+
+  <script>
+    (function () {
+      var authCheckDone = false;
+      var originalFetch = window.fetch;
+      window.fetch = function (url, opts) {
+        var u = typeof url === 'string' ? url : (url && url.url);
+        if (u && u.indexOf('/api/') !== -1) {
+          var token = localStorage.getItem('enigma_access_token');
+          opts = opts || {};
+          opts.headers = opts.headers || {};
+          if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        }
+        return originalFetch.apply(this, arguments).then(function (res) {
+          if (res.status === 401 && u && u.indexOf('/api/') !== -1) {
+            localStorage.removeItem('enigma_access_token');
+            localStorage.removeItem('enigma_refresh_token');
+            window.location.href = '/login';
+          }
+          return res;
+        });
+      };
+      function ensureAuth(cb) {
+        if (authCheckDone) { if (cb) cb(); return; }
+        originalFetch('/api/auth/config').then(function (r) { return r.json(); }).then(function (c) {
+          authCheckDone = true;
+          if (c.authRequired && !localStorage.getItem('enigma_access_token')) {
+            window.location.href = '/login';
+            return;
+          }
+          if (cb) cb();
+        }).catch(function () { authCheckDone = true; if (cb) cb(); });
+      }
+      ensureAuth(function () {
+        var path = (window.location.pathname || '').replace(/\/$/, '') || '/';
+        if (path === '/') runApp();
+      });
+      function runApp() {
+    (function () {
+      var API_COMMITMENTS = '/api/commitments';
+      var API_COMMITMENT = '/api/commitment';
+      var feedList = document.getElementById('feed-list');
+      var feedEmpty = document.getElementById('feed-empty');
+      var feedError = document.getElementById('feed-error');
+      var orb = document.getElementById('orb');
+      var lifeQuery = document.getElementById('life-query');
+      var closeLifeQuery = document.getElementById('close-life-query');
+      var audioFab = document.getElementById('audio-fab');
+      var capturePanel = document.getElementById('capture-panel');
+      var closeCapture = document.getElementById('close-capture');
+      var modeCommitment = document.getElementById('mode-commitment');
+      var modePeople = document.getElementById('mode-people');
+      var modeThought = document.getElementById('mode-thought');
+      var mic = document.getElementById('mic');
+      var captureStatus = document.getElementById('capture-status');
+      var captureType = 'commitment';
+      var mediaRecorder = null;
+      var chunks = [];
+      var longPressTimer = null;
+
+      var signOutEl = document.getElementById('sign-out');
+      if (signOutEl && localStorage.getItem('enigma_access_token')) {
+        signOutEl.style.display = 'block';
+        signOutEl.addEventListener('click', function (e) {
+          e.preventDefault();
+          localStorage.removeItem('enigma_access_token');
+          localStorage.removeItem('enigma_refresh_token');
+          window.location.href = '/login';
+        });
+      }
+
+      function loadCommitments() {
+        feedError.style.display = 'none';
+        feedEmpty.style.display = 'none';
+        feedList.innerHTML = '';
+        fetch(API_COMMITMENTS)
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error(r.status + ' ' + r.statusText)); })
+          .then(function (items) {
+            if (!items || items.length === 0) {
+              feedEmpty.style.display = 'block';
+              return;
+            }
+            items.forEach(function (item) {
+              var li = document.createElement('li');
+              li.className = 'feed-item';
+              var ctx = (item.context || '').trim() || 'Commitment';
+              var content = (item.content || '').trim() || '—';
+              var tag = (item.tag || '').trim();
+              li.innerHTML = '<div class="context">' + escapeHtml(ctx) + '</div><div class="content">' + escapeHtml(content) + '</div>' + (tag ? '<div class="tag">' + escapeHtml(tag) + '</div>' : '');
+              feedList.appendChild(li);
+            });
+          })
+          .catch(function (e) {
+            feedError.textContent = 'Could not load commitments: ' + e.message;
+            feedError.style.display = 'block';
+          });
+      }
+      function escapeHtml(s) {
+        var div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+
+      orb.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+        document.querySelector('.feed') && document.querySelector('.feed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      orb.addEventListener('mousedown', function () {
+        longPressTimer = setTimeout(function () {
+          longPressTimer = null;
+          lifeQuery.classList.add('show');
+          lifeQuery.setAttribute('aria-hidden', 'false');
+        }, 500);
+      });
+      orb.addEventListener('mouseup', function () { if (longPressTimer) clearTimeout(longPressTimer); longPressTimer = null; });
+      orb.addEventListener('mouseleave', function () { if (longPressTimer) clearTimeout(longPressTimer); longPressTimer = null; });
+      orb.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        longPressTimer = setTimeout(function () {
+          longPressTimer = null;
+          lifeQuery.classList.add('show');
+          lifeQuery.setAttribute('aria-hidden', 'false');
+        }, 500);
+      });
+      orb.addEventListener('touchend', function (e) {
+        e.preventDefault();
+        if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+      });
+
+      closeLifeQuery.addEventListener('click', function () {
+        lifeQuery.classList.remove('show');
+        lifeQuery.setAttribute('aria-hidden', 'true');
+      });
+
+      var lqInput = document.getElementById('lq-input');
+      var lqAskBtn = document.getElementById('lq-ask-btn');
+      var lqVoiceBtn = document.getElementById('lq-voice-btn');
+      var lqStatus = document.getElementById('lq-status');
+      var lqAnswerCard = document.getElementById('lq-answer-card');
+      var lqMediaRecorder = null;
+      var lqChunks = [];
+      var lqBriefContext = null;
+
+      function setLqStatus(msg, type) {
+        lqStatus.textContent = msg || '';
+        lqStatus.className = 'lq-status' + (type ? ' ' + type : '');
+      }
+      function showLqAnswer(question, answer) {
+        lqAnswerCard.style.display = 'block';
+        lqAnswerCard.innerHTML = (question ? '<div class="lq-question">' + escapeHtml(question) + '</div>' : '') + escapeHtml(answer);
+      }
+
+      lqAskBtn.addEventListener('click', function () {
+        var q = (lqInput.value || '').trim();
+        if (!q) {
+          setLqStatus('Type a question first', 'error');
+          return;
+        }
+        lqAnswerCard.style.display = 'none';
+        setLqStatus('Asking…');
+        lqAskBtn.disabled = true;
+        var payload = { question: q };
+        if (lqBriefContext) payload.brief_context = lqBriefContext;
+        fetch('/api/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+          .then(function (_) {
+            lqAskBtn.disabled = false;
+            if (_.ok) {
+              setLqStatus('');
+              showLqAnswer(q, _.data.answer || '');
+            } else {
+              setLqStatus(_.data.detail || 'Request failed', 'error');
+            }
+          })
+          .catch(function (e) {
+            lqAskBtn.disabled = false;
+            setLqStatus('Request failed: ' + e.message, 'error');
+          });
+      });
+
+      lqVoiceBtn.addEventListener('click', function () {
+        if (lqMediaRecorder && lqMediaRecorder.state === 'recording') {
+          lqVoiceBtn.classList.remove('recording');
+          lqMediaRecorder.stop();
+          return;
+        }
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(function (stream) {
+            lqMediaRecorder = new MediaRecorder(stream);
+            lqChunks = [];
+            lqMediaRecorder.ondataavailable = function (e) { if (e.data.size) lqChunks.push(e.data); };
+            lqMediaRecorder.onstop = function () {
+              stream.getTracks().forEach(function (t) { t.stop(); });
+              if (lqChunks.length === 0) {
+                setLqStatus('No audio recorded', 'error');
+                return;
+              }
+              var blob = new Blob(lqChunks, { type: 'audio/webm' });
+              setLqStatus('Transcribing & asking…');
+              lqAnswerCard.style.display = 'none';
+              lqVoiceBtn.classList.remove('recording');
+              var form = new FormData();
+              form.append('audio', blob, 'audio.webm');
+              if (lqBriefContext) form.append('brief_context', lqBriefContext);
+              fetch('/api/query/voice', { method: 'POST', body: form })
+                .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+                .then(function (_) {
+                  if (_.ok) {
+                    setLqStatus('');
+                    showLqAnswer(_.data.question || '', _.data.answer || '');
+                  } else {
+                    setLqStatus(_.data.detail || 'Request failed', 'error');
+                  }
+                })
+                .catch(function (e) {
+                  setLqStatus('Request failed: ' + e.message, 'error');
+                });
+            };
+            lqMediaRecorder.start();
+            lqVoiceBtn.classList.add('recording');
+            setLqStatus('Recording… Click mic again to send');
+          })
+          .catch(function () {
+            setLqStatus('Microphone access denied', 'error');
+          });
+      });
+
+      audioFab.addEventListener('click', function () {
+        capturePanel.classList.add('show');
+        capturePanel.setAttribute('aria-hidden', 'false');
+      });
+      closeCapture.addEventListener('click', function () {
+        capturePanel.classList.remove('show');
+        capturePanel.setAttribute('aria-hidden', 'true');
+      });
+      modeCommitment.addEventListener('click', function () {
+        captureType = 'commitment';
+        modeCommitment.classList.add('active');
+        modePeople.classList.remove('active');
+        if (modeThought) modeThought.classList.remove('active');
+      });
+      modePeople.addEventListener('click', function () {
+        captureType = 'people_context';
+        modePeople.classList.add('active');
+        modeCommitment.classList.remove('active');
+        if (modeThought) modeThought.classList.remove('active');
+      });
+      if (modeThought) {
+        modeThought.addEventListener('click', function () {
+          captureType = 'thought';
+          modeThought.classList.add('active');
+          modeCommitment.classList.remove('active');
+          modePeople.classList.remove('active');
+        });
+      }
+
+      function setCaptureStatus(msg, type) {
+        captureStatus.textContent = msg;
+        captureStatus.className = 'status' + (type ? ' ' + type : '');
+      }
+      mic.addEventListener('click', function () {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+          mic.classList.remove('recording');
+          mediaRecorder.stop();
+        } else {
+          navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function (stream) {
+              mediaRecorder = new MediaRecorder(stream);
+              chunks = [];
+              mediaRecorder.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+              mediaRecorder.onstop = function () {
+                stream.getTracks().forEach(function (t) { t.stop(); });
+                if (chunks.length === 0) {
+                  setCaptureStatus('No audio recorded', 'error');
+                  return;
+                }
+                var blob = new Blob(chunks, { type: 'audio/webm' });
+                setCaptureStatus('Sending…', '');
+                var form = new FormData();
+                form.append('audio', blob, 'audio.webm');
+                form.append('type', captureType);
+                fetch(API_COMMITMENT, { method: 'POST', body: form })
+                  .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+                  .then(function (_) {
+                    var d = _.data;
+                    if (_.ok) {
+                      setCaptureStatus('Saved to Nexus' + (d.tag ? ' [' + d.tag + ']' : '') + ': "' + (d.preview || '').slice(0, 35) + '…"', 'success');
+                      loadCommitments();
+                    } else {
+                      var detail = d.detail;
+                      if (Array.isArray(detail) && detail.length) detail = detail[0].msg || detail[0];
+                      setCaptureStatus(detail || 'Upload failed', 'error');
+                    }
+                  })
+                  .catch(function (e) {
+                    setCaptureStatus('Request failed: ' + e.message, 'error');
+                  });
+              };
+              mediaRecorder.start();
+              mic.classList.add('recording');
+              setCaptureStatus('Recording… Tap again to stop and send', '');
+            })
+            .catch(function () {
+              setCaptureStatus('Microphone access denied or unavailable', 'error');
+            });
+        }
+      });
+
+      loadCommitments();
+
+      function hasFollowupParam() {
+        var search = (location.search || '').toLowerCase();
+        var hash = (location.hash || '').toLowerCase();
+        return search.indexOf('followup=1') !== -1 || hash.indexOf('followup=1') !== -1;
+      }
+      if (hasFollowupParam()) {
+        fetch('/api/brief/context')
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error(r.status)); })
+          .then(function (d) {
+            if (d.brief) {
+              lqBriefContext = d.brief;
+              lqInput.placeholder = 'Ask a follow-up about your Sovereign Brief…';
+              setLqStatus('Brief context loaded — ask a follow-up.');
+            }
+            lifeQuery.classList.add('show');
+            lifeQuery.setAttribute('aria-hidden', 'false');
+          })
+          .catch(function () {
+            lifeQuery.classList.add('show');
+            lifeQuery.setAttribute('aria-hidden', 'false');
+          });
+      }
+    })();
+      } // end runApp
+    })();
+  </script>
+</body>
+</html>

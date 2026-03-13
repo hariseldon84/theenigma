@@ -1,0 +1,21 @@
+# Enigma OS
+.venv/
+venv/
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.idea/
+.vscode/
+*.egg-info/
+dist/
+build/
+
+# MCP config may contain API keys — keep local only
+.cursor/mcp.json
+
+# Dedicated Python 3.12 venv for figma-mcp (PyPI requires >=3.12)
+.venv-figma-mcp/
+
+# Last Sovereign Brief (FR-3.4 follow-up context)
+.last_sovereign_brief

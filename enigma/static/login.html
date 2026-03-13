@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enigma — Sign in</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --surface: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --cerulean: #00A3FF;
+      --cerulean-dim: rgba(0,163,255,0.25);
+      --text: #e5e5e5;
+      --text-muted: rgba(229,229,229,0.6);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card {
+      width: 100%;
+      max-width: 360px;
+      padding: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+    }
+    h1 { font-size: 1rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 1.5rem; text-align: center; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; }
+    input[type=email], input[type=password] {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    input:focus { outline: none; border-color: var(--cerulean); }
+    .btn {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.65rem 1rem;
+      background: var(--cerulean);
+      color: #050505;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { opacity: 0.95; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .error { font-size: 0.85rem; color: #f66; margin-top: 0.75rem; text-align: center; }
+    .success { font-size: 0.85rem; color: #6a6; margin-top: 0.75rem; text-align: center; }
+    .hint { font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem; text-align: center; }
+    .toggle-auth { margin-top: 1rem; text-align: center; }
+    .toggle-auth button {
+      background: none;
+      border: none;
+      color: var(--cerulean);
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-decoration: underline;
+    }
+    .toggle-auth button:hover { opacity: 0.9; }
+    .link-row { margin-top: 0.5rem; text-align: center; }
+    .link-row a, .link-row button.link {
+      background: none; border: none; color: var(--cerulean); cursor: pointer;
+      font-size: 0.85rem; text-decoration: underline; padding: 0;
+    }
+    .link-row a:hover, .link-row button.link:hover { opacity: 0.9; }
+    [data-view] { display: none; }
+    [data-view].active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Enigma</h1>
+
+    <div id="view-signin" data-view class="active">
+      <form id="auth-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••" minlength="6">
+        </div>
+        <button type="submit" class="btn" id="btn">Sign in</button>
+      </form>
+      <p class="link-row"><button type="button" class="link" id="forgot-password">Forgot password?</button></p>
+      <p class="toggle-auth"><button type="button" id="toggle-mode">Create an account</button></p>
+    </div>
+
+    <div id="view-forgot" data-view>
+      <form id="forgot-form">
+        <div class="form-group">
+          <label for="forgot-email">Email</label>
+          <input type="email" id="forgot-email" name="email" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <button type="submit" class="btn" id="btn-forgot">Send reset link</button>
+      </form>
+      <p class="link-row"><button type="button" class="link" id="back-from-forgot">Back to sign in</button></p>
+    </div>
+
+    <div id="view-new-password" data-view>
+      <form id="new-password-form">
+        <div class="form-group">
+          <label for="new-password">New password</label>
+          <input type="password" id="new-password" name="password" required minlength="6" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label for="new-password-confirm">Confirm password</label>
+          <input type="password" id="new-password-confirm" required minlength="6" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn" id="btn-new-password">Update password</button>
+      </form>
+    </div>
+
+    <p class="error" id="error" style="display: none;"></p>
+    <p class="success" id="success" style="display: none;"></p>
+    <p class="hint">Sign in or sign up with email and password.</p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('auth-form');
+      var btn = document.getElementById('btn');
+      var errEl = document.getElementById('error');
+      var successEl = document.getElementById('success');
+      var toggleBtn = document.getElementById('toggle-mode');
+      var isSignUp = false;
+
+      function showError(msg) {
+        errEl.textContent = msg || '';
+        errEl.style.display = msg ? 'block' : 'none';
+        if (msg) successEl.style.display = 'none';
+      }
+      function showSuccess(msg) {
+        successEl.textContent = msg || '';
+        successEl.style.display = msg ? 'block' : 'none';
+        if (msg) errEl.style.display = 'none';
+      }
+      function messageForAuthError(msg, context) {
+        if (!msg) return context || 'Something went wrong.';
+        var lower = msg.toLowerCase();
+        if (lower.indexOf('rate limit') !== -1 || lower.indexOf('limit exceeded') !== -1) {
+          return 'Too many emails sent for this address. Supabase limits how often reset links can be sent. Try again in an hour, or sign in with your current password if you remember it.';
+        }
+        return msg;
+      }
+      function setMode(signUp) {
+        isSignUp = signUp;
+        btn.textContent = signUp ? 'Sign up' : 'Sign in';
+        toggleBtn.textContent = signUp ? 'Already have an account? Sign in' : 'Create an account';
+      }
+
+      function showView(id) {
+        var views = document.querySelectorAll('[data-view]');
+        views.forEach(function (v) { v.classList.remove('active'); });
+        var el = document.getElementById(id);
+        if (el) el.classList.add('active');
+      }
+
+      toggleBtn.addEventListener('click', function () {
+        showError('');
+        setMode(!isSignUp);
+      });
+
+      function getCreateClient() {
+        var s = window.supabase;
+        if (!s) return null;
+        return s.createClient || (s.default && s.default.createClient) || null;
+      }
+
+      function initAuth(c) {
+        if (c.error) {
+          showError('Auth config error: ' + c.error);
+          return;
+        }
+        if (!c.authRequired || !c.supabaseUrl || !c.supabaseAnonKey) {
+          window.location.href = '/';
+          return;
+        }
+        var createClientFn = getCreateClient();
+        if (!createClientFn) {
+          showError('Supabase library did not load. Check your connection, disable ad blockers for this site, and refresh.');
+          return;
+        }
+        var supabase = createClientFn(c.supabaseUrl, c.supabaseAnonKey);
+
+        var hash = (window.location.hash || '').toLowerCase();
+        var isRecovery = hash.indexOf('type=recovery') !== -1;
+        if (isRecovery) {
+          supabase.auth.getSession().then(function (result) {
+            var session = result.data && result.data.session;
+            if (session && session.access_token) {
+              showView('view-new-password');
+              showError('');
+              var newForm = document.getElementById('new-password-form');
+              var btnNew = document.getElementById('btn-new-password');
+              newForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var p1 = document.getElementById('new-password').value;
+                var p2 = document.getElementById('new-password-confirm').value;
+                if (p1.length < 6) {
+                  showError('Password must be at least 6 characters.');
+                  return;
+                }
+                if (p1 !== p2) {
+                  showError('Passwords do not match.');
+                  return;
+                }
+                btnNew.disabled = true;
+                showError('');
+                supabase.auth.updateUser({ password: p1 })
+                  .then(function (r) {
+                    if (r.error) {
+                      showError(r.error.message || 'Failed to update password.');
+                      btnNew.disabled = false;
+                      return;
+                    }
+                    var s = (r.data && r.data.session) || session;
+                    if (s && s.access_token) {
+                      localStorage.setItem('enigma_access_token', s.access_token);
+                      localStorage.setItem('enigma_refresh_token', s.refresh_token || '');
+                      window.location.replace('/');
+                    } else {
+                      supabase.auth.getSession().then(function (res) {
+                        var latest = res.data && res.data.session;
+                        if (latest && latest.access_token) {
+                          localStorage.setItem('enigma_access_token', latest.access_token);
+                          localStorage.setItem('enigma_refresh_token', latest.refresh_token || '');
+                          window.location.replace('/');
+                        } else {
+                          showError('Password updated. Please sign in with your new password.');
+                          btnNew.disabled = false;
+                          showView('view-signin');
+                          if (window.history && window.history.replaceState) {
+                            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                          }
+                        }
+                      });
+                    }
+                  })
+                  .catch(function (e) {
+                    showError(e.message || 'Failed to update password.');
+                    btnNew.disabled = false;
+                  });
+              });
+              return;
+            }
+            showView('view-signin');
+          });
+        } else {
+          showView('view-signin');
+        }
+
+        document.getElementById('forgot-password').addEventListener('click', function () {
+          showError('');
+          showSuccess('');
+          showView('view-forgot');
+        });
+        document.getElementById('back-from-forgot').addEventListener('click', function () {
+          showError('');
+          showSuccess('');
+          showView('view-signin');
+        });
+        document.getElementById('forgot-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var email = document.getElementById('forgot-email').value.trim();
+          if (!email) {
+            showError('Please enter your email.');
+            return;
+          }
+          var btnForgot = document.getElementById('btn-forgot');
+          btnForgot.disabled = true;
+          showError('');
+          var redirectTo = window.location.origin + window.location.pathname;
+          supabase.auth.resetPasswordForEmail(email, { redirectTo: redirectTo })
+            .then(function (r) {
+              if (r.error) {
+                showError(messageForAuthError(r.error.message, 'Failed to send reset link.'));
+                btnForgot.disabled = false;
+                return;
+              }
+              showSuccess('Check your email for the password reset link.');
+              btnForgot.disabled = false;
+            })
+            .catch(function (e) {
+              showError(messageForAuthError(e && e.message, 'Failed to send reset link.'));
+              btnForgot.disabled = false;
+            });
+        });
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var email = document.getElementById('email').value.trim();
+          var password = document.getElementById('password').value;
+          if (!email || !password) {
+            showError('Email and password required.');
+            return;
+          }
+          if (password.length < 6) {
+            showError('Password must be at least 6 characters.');
+            return;
+          }
+          btn.disabled = true;
+          showError('');
+          var promise = isSignUp
+            ? supabase.auth.signUp({ email: email, password: password })
+            : supabase.auth.signInWithPassword({ email: email, password: password });
+          promise
+            .then(function (r) {
+              if (r.error) {
+                showError(messageForAuthError(r.error.message, isSignUp ? 'Sign up failed' : 'Sign in failed'));
+                btn.disabled = false;
+                return;
+              }
+              var session = r.data.session;
+              if (session && session.access_token) {
+                localStorage.setItem('enigma_access_token', session.access_token);
+                localStorage.setItem('enigma_refresh_token', session.refresh_token || '');
+                window.location.href = '/';
+              } else if (isSignUp && r.data.user && !session) {
+                showError('Check your email to confirm your account, then sign in.');
+                btn.disabled = false;
+              } else {
+                showError('No session returned.');
+                btn.disabled = false;
+              }
+            })
+            .catch(function (e) {
+              showError(e.message || 'Failed');
+              btn.disabled = false;
+            });
+        });
+      }
+
+      function waitForSupabase(c, attemptsLeft, cb) {
+        if (getCreateClient()) {
+          cb(c);
+          return;
+        }
+        if (attemptsLeft <= 0) {
+          initAuth(c);
+          return;
+        }
+        setTimeout(function () { waitForSupabase(c, attemptsLeft - 1, cb); }, 100);
+      }
+
+      fetch('/api/auth/config')
+        .then(function (r) {
+          if (!r.ok) {
+            return r.text().then(function (text) {
+              throw new Error('Server returned ' + r.status + (text ? ': ' + text.slice(0, 80) : ''));
+            });
+          }
+          return r.json();
+        })
+        .then(function (c) {
+          waitForSupabase(c, 30, initAuth);
+        })
+        .catch(function (err) {
+          var msg = 'Could not load auth config. ';
+          if (err && err.message) {
+            msg += err.message;
+          } else if (err) {
+            msg += String(err);
+          }
+          showError(msg);
+        });
+    })();
+  </script>
+</body>
+</html>
