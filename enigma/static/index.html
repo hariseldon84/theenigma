@@ -91,13 +91,14 @@
       var originalFetch = window.fetch;
       window.fetch = function (url, opts) {
         var u = typeof url === 'string' ? url : (url && url.url);
+        var requestOpts = opts;
         if (u && u.indexOf('/api/') !== -1) {
           var token = localStorage.getItem('enigma_access_token');
-          opts = opts || {};
-          opts.headers = opts.headers || {};
-          if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+          requestOpts = requestOpts || {};
+          requestOpts.headers = requestOpts.headers || {};
+          if (token) requestOpts.headers['Authorization'] = 'Bearer ' + token;
         }
-        return originalFetch.apply(this, arguments).then(function (res) {
+        return originalFetch.call(this, url, requestOpts).then(function (res) {
           if (res.status === 401 && u && u.indexOf('/api/') !== -1) {
             localStorage.removeItem('enigma_access_token');
             localStorage.removeItem('enigma_refresh_token');
@@ -142,6 +143,25 @@
         mediaRecorder.stop();
       }
 
+      async function maybeSaveThoughtToCloset(result) {
+        if (!result || result.tag !== 'thought') return false;
+        var save = window.confirm('Act now or save this thought to Grandma\'s Closet?\n\nClick OK to save for later.');
+        if (!save) return false;
+        const res = await fetch('/api/grandmas-closet/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: result.content || result.preview || '',
+            context: "Grandma's Closet (from Thought)"
+          }),
+        });
+        const data = await res.json().catch(function () { return {}; });
+        if (!res.ok) {
+          throw new Error(data.detail || 'Could not save to Grandma\'s Closet');
+        }
+        return true;
+      }
+
       async function startRecording() {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -165,6 +185,12 @@
               if (res.ok) {
                 var tag = data.tag ? ' [' + data.tag + ']' : '';
                 setStatus('Saved to Nexus' + tag + ': "' + (data.preview || '').slice(0, 35) + '…"', 'success');
+                try {
+                  const saved = await maybeSaveThoughtToCloset(data);
+                  if (saved) setStatus('Thought saved to Grandma\'s Closet for later.', 'success');
+                } catch (e) {
+                  setStatus('Thought captured, but Closet save failed: ' + e.message, 'error');
+                }
               } else {
                 var detail = data.detail;
                 if (Array.isArray(detail) && detail.length) detail = detail[0].msg || detail[0];

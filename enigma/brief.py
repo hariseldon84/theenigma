@@ -19,7 +19,15 @@ from enigma.config import (
     TELEGRAM_CHAT_ID,
 )
 from enigma.brief_store import save_last_brief
-from enigma.notion_client import get_nexus_since, get_open_commitments, get_recent_nuggets, get_recent_thoughts, _get_prop
+from enigma.history_store import append_brief_archive
+from enigma.notion_client import (
+    get_nexus_since,
+    get_open_commitments,
+    get_recent_nuggets,
+    get_recent_thoughts,
+    get_recent_people_context,
+    _get_prop,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +106,40 @@ def _followup_link() -> str:
 
 def _brief_body_with_followup(brief: str) -> str:
     """Append 'Ask follow-up' line to the brief for delivery."""
-    return brief.rstrip() + "\n\n— Ask a follow-up: " + _followup_link()
+    return brief.rstrip() + "\n\n— Ask a follow-up: " + _followup_link() + _maybe_whatsapp_reminder()
+
+
+def _maybe_whatsapp_reminder() -> str:
+    """
+    FR-8.5 (optional): weekly reminder to export/import chats.
+    Show on Fridays when people-context has not been updated in the last 7 days.
+    """
+    now = datetime.now(timezone.utc)
+    if now.weekday() != 4:  # Friday
+        return ""
+    try:
+        recent_people = get_recent_people_context(limit=25)
+    except Exception:
+        recent_people = []
+    threshold = now - timedelta(days=7)
+    has_recent = False
+    for p in recent_people:
+        d = (_get_prop(p, "Last Updated") or "").strip()
+        if not d:
+            continue
+        try:
+            dt = datetime.fromisoformat(d.replace("Z", "+00:00"))
+            if dt >= threshold:
+                has_recent = True
+                break
+        except Exception:
+            continue
+    if has_recent:
+        return ""
+    return (
+        "\n\n— Weekly reminder: Export and import your WhatsApp/Telegram chats via "
+        "Dashboard -> Import Chat to refresh People Context."
+    )
 
 
 def send_brief_email(body: str) -> None:
@@ -164,6 +205,7 @@ def run_and_deliver_brief(hours: int = 24) -> dict:
     """
     brief = run_brief(hours=hours)
     save_last_brief(brief)
+    append_brief_archive(brief)
     email_sent = False
     telegram_sent = False
     if BRIEF_EMAIL_TO and BRIEF_SMTP_HOST:

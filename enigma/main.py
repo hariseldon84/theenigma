@@ -6,6 +6,7 @@ from enigma.notion_client import get_recent_nuggets, _get_prop
 from enigma.orchestrator import health_check, fetch_commitments, push_to_nexus, store_in_vault, read_from_vault
 from enigma.sentinel import push_sample, run_loop
 from enigma.brief import run_brief, run_and_deliver_brief
+from enigma.grandmas_closet import weekly_closet_digest
 
 
 def main():
@@ -23,6 +24,7 @@ def main():
         print("  web        — Run Commitment Capture web app (http://127.0.0.1:<PORT>, default 5000)")
         print("  brief      — Generate and deliver Sovereign Brief (email + Telegram if configured)")
         print("  brief-only — Generate Brief and print to stdout (no delivery); use --show-context to print raw context then brief")
+        print("  closet-digest — Weekly Grandma's Closet digest (default 7 days)")
         print("  thought-stitch — Epic 5: LLM themes/suggestions from Thought Memory (run weekly)")
         sys.exit(1)
 
@@ -120,6 +122,12 @@ def main():
             print("(Email sent)", file=sys.stderr)
         if result.get("telegram_sent"):
             print("(Telegram sent)", file=sys.stderr)
+        sys.exit(0)
+
+    if cmd == "closet-digest":
+        days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
+        result = weekly_closet_digest(days=days)
+        print(result["digest"])
         sys.exit(0)
 
     if cmd == "thought-stitch":

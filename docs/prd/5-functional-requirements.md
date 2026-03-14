@@ -12,3 +12,6 @@ Epics are split into individual files for development:
 | **Epic 6: Grandma's Closet** | [epic-6-grandmas-closet.md](./epics/epic-6-grandmas-closet.md) | Post-MVP |
 | **Epic 7: User View (Web Dashboard)** | [epic-7-user-view-web-dashboard.md](./epics/epic-7-user-view-web-dashboard.md) | Post-MVP |
 | **Epic 8: Chat Import (WhatsApp & Telegram)** | [epic-8-chat-import-whatsapp-telegram.md](./epics/epic-8-chat-import-whatsapp-telegram.md) | Post-MVP |
+| **Epic 9: Recommendation Governance & Adaptive Planning** | [epic-9-recommendation-governance-adaptive-planning.md](./epics/epic-9-recommendation-governance-adaptive-planning.md) | Post-MVP |
+| **Epic 10: Health-Adaptive Cognitive Ops** | [epic-10-health-adaptive-cognitive-ops.md](./epics/epic-10-health-adaptive-cognitive-ops.md) | Post-MVP |
+| **Epic 11: Trust, Compliance & Enterprise Readiness** | [epic-11-trust-compliance-enterprise-readiness.md](./epics/epic-11-trust-compliance-enterprise-readiness.md) | Post-MVP |

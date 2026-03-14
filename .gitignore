@@ -19,3 +19,7 @@ build/
 
 # Last Sovereign Brief (FR-3.4 follow-up context)
 .last_sovereign_brief
+
+# Epic 7 local archives
+.brief_archive.json
+.query_history.json

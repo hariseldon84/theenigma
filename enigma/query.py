@@ -4,7 +4,14 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from enigma.config import OPENAI_API_KEY
-from enigma.notion_client import get_nexus_since, get_open_commitments, get_recent_nuggets, _get_prop
+from enigma.history_store import append_query_history
+from enigma.notion_client import (
+    get_nexus_since,
+    get_open_commitments,
+    get_recent_nuggets,
+    get_recent_grandmas_closet,
+    _get_prop,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +29,13 @@ def _since_iso(hours: int = 168) -> str:
     return t.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
-def _build_rag_context(commitments: list, nexus_pages: list, max_chars: int = 12000) -> str:
-    """Build a single text blob for the LLM from commitments and Nexus (RAG context)."""
+def _build_rag_context(
+    commitments: list,
+    nexus_pages: list,
+    grandmas_closet: list,
+    max_chars: int = 12000,
+) -> str:
+    """Build a single text blob for the LLM from commitments, Nexus, and Grandma's Closet (Epic 6)."""
     lines = []
     lines.append("=== OPEN COMMITMENTS ===")
     for p in commitments:
@@ -42,6 +54,14 @@ def _build_rag_context(commitments: list, nexus_pages: list, max_chars: int = 12
         lines.append(f"- [{tag}] {ctx}: {content}")
     if not nexus_pages:
         lines.append("(none)")
+    lines.append("")
+    lines.append("=== GRANDMA'S CLOSET (DEFERRED IDEAS) ===")
+    for p in grandmas_closet:
+        ctx = _get_prop(p, "Context")
+        content = _get_prop(p, "Content")
+        lines.append(f"- {ctx}: {content}")
+    if not grandmas_closet:
+        lines.append("(none)")
     text = "\n".join(lines)
     if len(text) > max_chars:
         text = text[:max_chars] + "\n... (truncated)"
@@ -52,6 +72,7 @@ def run_life_query(
     question: str,
     context_hours: int = 168,
     brief_context: Optional[str] = None,
+    source: str = "text",
 ) -> str:
     """
     Answer the user's question using RAG over Nexus + Open Commitments.
@@ -64,12 +85,13 @@ def run_life_query(
         return "Please ask a question."
     logger.info("Life Query running question_len=%s brief_context=%s", len(question), bool(brief_context))
     commitments = get_open_commitments()
+    grandmas_closet = get_recent_grandmas_closet(limit=80)
     since = _since_iso(hours=context_hours)
     try:
         nexus_pages = get_nexus_since(since)
     except Exception:
         nexus_pages = get_recent_nuggets(limit=80)
-    context_text = _build_rag_context(commitments, nexus_pages)
+    context_text = _build_rag_context(commitments, nexus_pages, grandmas_closet)
     if brief_context and (brief_context := brief_context.strip()):
         context_text = (
             "=== SOVEREIGN BRIEF (for follow-up questions) ===\n"
@@ -95,4 +117,11 @@ def run_life_query(
         ],
         max_tokens=500,
     )
-    return (response.choices[0].message.content or "").strip()
+    answer = (response.choices[0].message.content or "").strip()
+    append_query_history(
+        question=question,
+        answer=answer,
+        brief_context_used=bool(brief_context and brief_context.strip()),
+        source=source,
+    )
+    return answer

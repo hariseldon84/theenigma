@@ -135,6 +135,7 @@ def capture_commitment(audio_bytes: bytes, filename: Optional[str] = None) -> di
     return {
         "id": page.get("id"),
         "context": context,
+        "content": content,
         "preview": preview,
         "tag": tag,
     }
@@ -166,6 +167,7 @@ def capture_people_context(audio_bytes: bytes, filename: Optional[str] = None) -
     return {
         "id": page.get("id"),
         "context": CONTEXT_PEOPLE_CONTEXT,
+        "content": content,
         "preview": preview,
         "tag": SOVEREIGN_TAG_PEOPLE_CONTEXT,
     }
@@ -196,6 +198,7 @@ def capture_thought(audio_bytes: bytes, filename: Optional[str] = None) -> dict:
     return {
         "id": page.get("id"),
         "context": CONTEXT_THOUGHT,
+        "content": content,
         "preview": preview,
         "tag": SOVEREIGN_TAG_THOUGHT,
     }

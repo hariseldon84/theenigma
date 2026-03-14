@@ -20,6 +20,9 @@
 | **User View (Web Dashboard)** | Dashboard, Thoughts, Commitments, Conversations & Summaries, Grandma's Closet, Brief archive, Life Query history |
 | **Chat Import (WhatsApp)** | Manual export + import; "Import Chat" in web; parser + dedupe; re-import updates latest context (no auto-append) |
 | **Chat Import (Telegram)** | Manual export + import; or AutoCapture via Takeout API (user auth once, periodic sync) |
+| **Recommendation Governance** | Recommendation Inbox (Accept/Modify/Defer/Reject), explainability receipts, noise-pruned suggestion delivery |
+| **Health-Adaptive Cognitive Ops** | Apple Health/Google Fit opt-in connectors; health-informed recommendation-only scheduling with guardrails |
+| **Trust & Enterprise Readiness** | Policy-as-code checks, evidence ledger, zero-trust context access, enterprise deployment options |
 
 ## 4.3 Out of Scope (MVP)
 

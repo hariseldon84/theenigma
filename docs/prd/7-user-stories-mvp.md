@@ -40,5 +40,12 @@
 | US-14 | As a user, I want to import WhatsApp chat exports so Enigma adds People Context to Nexus | Chat Import |
 | US-15 | As a user, I want re-imports to update my existing context for that contact, not duplicate | Chat Import |
 | US-16 | As a user, I want to import Telegram exports or auto-sync via Takeout | Chat Import |
+| US-17 | As a user, I want Enigma suggestions in one inbox where I can Accept, Modify, Defer, or Reject | Recommendation Governance |
+| US-18 | As a user, I want to see why Enigma suggested something (source + confidence) before deciding | Recommendation Governance |
+| US-19 | As a user, I want Enigma to reduce low-value interruptions and summarize noncritical suggestions | Recommendation Governance |
+| US-20 | As a user, I want Enigma to adapt schedule/task suggestions based on my opt-in health signals | Health-Adaptive Cognitive Ops |
+| US-21 | As a user, I want health-based changes to remain recommendations (not forced actions) | Health-Adaptive Cognitive Ops |
+| US-22 | As a team admin, I want every AI action to be traceable and policy-checked for auditability | Trust/Compliance/Enterprise |
+| US-23 | As an enterprise user, I want role-based approvals for high-risk agent actions | Trust/Compliance/Enterprise |
 
 ---

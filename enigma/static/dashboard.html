@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enigma — Dashboard</title>
+  <style>
+    :root {
+      --bg: #07151a;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface-2: rgba(255, 255, 255, 0.08);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #e9f0f3;
+      --muted: #9eb3bc;
+      --accent: #2ec4b6;
+      --accent-soft: rgba(46, 196, 182, 0.18);
+      --danger: #ff7373;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #11343f, transparent 60%),
+        radial-gradient(1000px 500px at 100% 0%, #123037, transparent 60%),
+        var(--bg);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    }
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .topbar h1 {
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+      margin: 0;
+    }
+    .topbar .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 0.42rem 0.7rem;
+      text-decoration: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1rem;
+    }
+    .nav {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.6rem;
+      height: fit-content;
+      position: sticky;
+      top: 1rem;
+    }
+    .tab {
+      width: 100%;
+      display: block;
+      text-align: left;
+      padding: 0.58rem 0.68rem;
+      border-radius: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      margin-bottom: 0.25rem;
+      font-size: 0.88rem;
+    }
+    .tab.active {
+      color: var(--text);
+      background: var(--accent-soft);
+      border: 1px solid rgba(46, 196, 182, 0.35);
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem;
+      min-height: 70vh;
+    }
+    .section { display: none; }
+    .section.active { display: block; }
+    .section h2 {
+      margin: 0 0 0.8rem;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+    .cards {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      margin-bottom: 1rem;
+    }
+    .metric {
+      background: rgba(0,0,0,0.24);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.8rem;
+    }
+    .metric .k {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .metric .l {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .list {
+      display: grid;
+      gap: 0.6rem;
+    }
+    .item {
+      background: rgba(0,0,0,0.24);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.72rem;
+    }
+    .item .context { color: var(--accent); font-size: 0.84rem; margin-bottom: 0.25rem; }
+    .item .content { white-space: pre-wrap; line-height: 1.42; font-size: 0.9rem; }
+    .item .meta { color: var(--muted); margin-top: 0.4rem; font-size: 0.78rem; }
+    .empty { color: var(--muted); font-size: 0.88rem; padding: 0.4rem 0; }
+    .error { color: var(--danger); font-size: 0.88rem; }
+    .digest {
+      background: rgba(0,0,0,0.24);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.8rem;
+      white-space: pre-wrap;
+      margin-bottom: 0.8rem;
+      line-height: 1.42;
+    }
+    .inline-actions { margin-top: 0.7rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .upload {
+      display: grid;
+      gap: 0.75rem;
+      max-width: 520px;
+      background: rgba(0,0,0,0.24);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.85rem;
+    }
+    .upload label { font-size: 0.82rem; color: var(--muted); }
+    .upload select,
+    .upload input[type=file] {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #0a2026;
+      color: var(--text);
+      padding: 0.52rem;
+      font-size: 0.9rem;
+    }
+    .status { color: var(--muted); font-size: 0.85rem; }
+
+    @media (max-width: 880px) {
+      .layout { grid-template-columns: 1fr; }
+      .nav {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.4rem;
+      }
+      .tab { margin-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <h1>Enigma Dashboard</h1>
+      <div class="actions">
+        <a class="btn" href="/">Action Sphere</a>
+        <a class="btn" href="/capture">Capture</a>
+        <button class="btn" id="sign-out" type="button">Sign out</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="nav" id="tabs"></aside>
+      <main class="panel">
+        <section class="section active" data-section="dashboard">
+          <h2>Dashboard</h2>
+          <div class="cards" id="metrics"></div>
+          <div class="status" id="overview-status"></div>
+        </section>
+
+        <section class="section" data-section="commitments">
+          <h2>Commitments</h2>
+          <div id="commitments-list" class="list"></div>
+        </section>
+
+        <section class="section" data-section="thoughts">
+          <h2>Thoughts</h2>
+          <div id="thoughts-list" class="list"></div>
+        </section>
+
+        <section class="section" data-section="conversations">
+          <h2>Conversations & Summaries</h2>
+          <div id="conversations-list" class="list"></div>
+        </section>
+
+        <section class="section" data-section="closet">
+          <h2>Grandma's Closet</h2>
+          <div class="digest" id="closet-digest">Loading digest…</div>
+          <div id="closet-list" class="list"></div>
+        </section>
+
+        <section class="section" data-section="briefs">
+          <h2>Brief Archive</h2>
+          <div id="briefs-list" class="list"></div>
+        </section>
+
+        <section class="section" data-section="queries">
+          <h2>Life Query History</h2>
+          <div id="queries-list" class="list"></div>
+        </section>
+
+        <section class="section" data-section="import">
+          <h2>Import Chat</h2>
+          <form id="import-form" class="upload">
+            <div>
+              <label for="import-platform">Platform</label>
+              <select id="import-platform" required>
+                <option value="whatsapp">WhatsApp (.txt)</option>
+                <option value="telegram">Telegram (.json/.html/.txt)</option>
+              </select>
+            </div>
+            <div>
+              <label for="import-file">File</label>
+              <input id="import-file" type="file" accept=".txt,.json,.html,.htm" required>
+            </div>
+            <button class="btn" type="submit">Upload & Save Summary</button>
+            <div class="status" id="import-status"></div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var originalFetch = window.fetch;
+      window.fetch = function (url, opts) {
+        var u = typeof url === 'string' ? url : (url && url.url);
+        var requestOpts = opts || {};
+        if (u && u.indexOf('/api/') !== -1) {
+          var token = localStorage.getItem('enigma_access_token');
+          requestOpts.headers = requestOpts.headers || {};
+          if (token) requestOpts.headers['Authorization'] = 'Bearer ' + token;
+        }
+        return originalFetch.call(this, url, requestOpts).then(function (res) {
+          if (res.status === 401 && u && u.indexOf('/api/') !== -1) {
+            localStorage.removeItem('enigma_access_token');
+            localStorage.removeItem('enigma_refresh_token');
+            window.location.href = '/login';
+          }
+          return res;
+        });
+      };
+
+      function ensureAuth() {
+        return originalFetch('/api/auth/config')
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('auth config failed')); })
+          .then(function (c) {
+            if (c.authRequired && !localStorage.getItem('enigma_access_token')) {
+              window.location.href = '/login';
+              throw new Error('auth required');
+            }
+          });
+      }
+
+      function renderList(el, items, formatter) {
+        el.innerHTML = '';
+        if (!items || !items.length) {
+          var e = document.createElement('div');
+          e.className = 'empty';
+          e.textContent = 'No items yet.';
+          el.appendChild(e);
+          return;
+        }
+        items.forEach(function (item) {
+          var card = document.createElement('article');
+          card.className = 'item';
+          card.innerHTML = formatter(item);
+          el.appendChild(card);
+        });
+      }
+
+      function esc(s) {
+        var d = document.createElement('div');
+        d.textContent = s || '';
+        return d.innerHTML;
+      }
+
+      var tabs = [
+        ['dashboard', 'Dashboard'],
+        ['commitments', 'Commitments'],
+        ['thoughts', 'Thoughts'],
+        ['conversations', 'Conversations'],
+        ['closet', "Grandma's Closet"],
+        ['briefs', 'Brief Archive'],
+        ['queries', 'Life Query History'],
+        ['import', 'Import Chat']
+      ];
+
+      function mountTabs() {
+        var nav = document.getElementById('tabs');
+        tabs.forEach(function (t, idx) {
+          var b = document.createElement('button');
+          b.className = 'tab' + (idx === 0 ? ' active' : '');
+          b.type = 'button';
+          b.dataset.tab = t[0];
+          b.textContent = t[1];
+          b.addEventListener('click', function () {
+            document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('active'); });
+            b.classList.add('active');
+            document.querySelectorAll('.section').forEach(function (s) { s.classList.remove('active'); });
+            var target = document.querySelector('[data-section="' + t[0] + '"]');
+            if (target) target.classList.add('active');
+          });
+          nav.appendChild(b);
+        });
+      }
+
+      function fetchJson(url) {
+        return fetch(url)
+          .then(function (r) {
+            return r.json().then(function (d) { return { ok: r.ok, data: d }; });
+          })
+          .then(function (x) {
+            if (!x.ok) throw new Error((x.data && x.data.detail) || 'Request failed');
+            return x.data;
+          });
+      }
+
+      function loadEverything() {
+        var reqs = {
+          commitments: fetchJson('/api/commitments'),
+          thoughts: fetchJson('/api/thoughts'),
+          conversations: fetchJson('/api/conversations'),
+          closet: fetchJson('/api/grandmas-closet'),
+          closetDigest: fetchJson('/api/grandmas-closet/digest?days=7'),
+          briefs: fetchJson('/api/brief/archive'),
+          queries: fetchJson('/api/query/history')
+        };
+
+        Promise.all(Object.keys(reqs).map(function (k) { return reqs[k]; }))
+          .then(function (vals) {
+            var data = {};
+            Object.keys(reqs).forEach(function (k, i) { data[k] = vals[i]; });
+            render(data);
+          })
+          .catch(function (e) {
+            document.getElementById('overview-status').textContent = 'Failed to load dashboard data: ' + e.message;
+            document.getElementById('overview-status').className = 'error';
+          });
+      }
+
+      function render(data) {
+        var metrics = document.getElementById('metrics');
+        var entries = [
+          ['Open commitments', (data.commitments || []).length],
+          ['Thoughts', (data.thoughts || []).length],
+          ['Conversations', (data.conversations || []).length],
+          ["Grandma's Closet", (data.closet || []).length],
+          ['Brief archive', (data.briefs || []).length],
+          ['Life Query history', (data.queries || []).length]
+        ];
+        metrics.innerHTML = '';
+        entries.forEach(function (x) {
+          var m = document.createElement('div');
+          m.className = 'metric';
+          m.innerHTML = '<div class="k">' + x[1] + '</div><div class="l">' + esc(x[0]) + '</div>';
+          metrics.appendChild(m);
+        });
+
+        function itemHtml(it) {
+          return '' +
+            '<div class="context">' + esc(it.context || it.tag || 'Entry') + '</div>' +
+            '<div class="content">' + esc(it.content || it.text || it.answer || '') + '</div>' +
+            '<div class="meta">' + esc(it.last_updated || it.created_at || '') + '</div>';
+        }
+
+        renderList(document.getElementById('commitments-list'), data.commitments, itemHtml);
+        renderList(document.getElementById('thoughts-list'), data.thoughts, itemHtml);
+        renderList(document.getElementById('conversations-list'), data.conversations, itemHtml);
+        renderList(document.getElementById('closet-list'), data.closet, itemHtml);
+        renderList(document.getElementById('briefs-list'), data.briefs, function (it) {
+          return '<div class="content">' + esc(it.text || '') + '</div><div class="meta">' + esc(it.created_at || '') + '</div>';
+        });
+        renderList(document.getElementById('queries-list'), data.queries, function (it) {
+          return '<div class="context">Q: ' + esc(it.question || '') + '</div>' +
+            '<div class="content">' + esc(it.answer || '') + '</div>' +
+            '<div class="meta">' + esc((it.source || 'text') + ' • ' + (it.created_at || '')) + '</div>';
+        });
+
+        var digest = document.getElementById('closet-digest');
+        digest.textContent = (data.closetDigest && data.closetDigest.digest) || 'No digest available.';
+      }
+
+      function wireImport() {
+        var form = document.getElementById('import-form');
+        var platformEl = document.getElementById('import-platform');
+        var fileEl = document.getElementById('import-file');
+        var statusEl = document.getElementById('import-status');
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var file = fileEl.files && fileEl.files[0];
+          if (!file) {
+            statusEl.textContent = 'Please choose a file.';
+            return;
+          }
+          statusEl.textContent = 'Uploading…';
+          var fd = new FormData();
+          fd.append('platform', platformEl.value);
+          fd.append('file', file, file.name);
+          fetch('/api/import/chat', { method: 'POST', body: fd })
+            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+            .then(function (res) {
+              if (!res.ok) {
+                statusEl.textContent = (res.data && res.data.detail) || 'Upload failed.';
+                return;
+              }
+              statusEl.textContent =
+                (res.data.mode === 'updated' ? 'Updated' : 'Created')
+                + ' canonical People Context for '
+                + (res.data.contact || 'contact')
+                + ' with '
+                + (res.data.message_count || 0)
+                + ' parsed messages.';
+              loadEverything();
+            })
+            .catch(function (err) {
+              statusEl.textContent = 'Upload failed: ' + err.message;
+            });
+        });
+      }
+
+      document.getElementById('sign-out').addEventListener('click', function () {
+        localStorage.removeItem('enigma_access_token');
+        localStorage.removeItem('enigma_refresh_token');
+        window.location.href = '/login';
+      });
+
+      ensureAuth().then(function () {
+        mountTabs();
+        wireImport();
+        loadEverything();
+      }).catch(function () {});
+    })();
+  </script>
+</body>
+</html>

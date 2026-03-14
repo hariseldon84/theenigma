@@ -52,6 +52,15 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
+def _rt(content: str, chunk_size: int = 1800) -> list:
+    """Convert long text into Notion rich_text chunks (<= 2000 chars each)."""
+    text = (content or "").strip()
+    if not text:
+        return []
+    chunks = [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
+    return [{"text": {"content": c}} for c in chunks]
+
+
 def create_nugget(
     context: str,
     content: str,
@@ -68,10 +77,10 @@ def create_nugget(
     properties = {
         "Context": {"title": [{"text": {"content": context[:2000]}}]},
         "Priority": {"select": {"name": priority}},
-        "Sovereign Tag": {"rich_text": [{"text": {"content": sovereign_tag[:2000]}}]}
+        "Sovereign Tag": {"rich_text": _rt(sovereign_tag[:2000])}
         if sovereign_tag
         else {"rich_text": []},
-        "Content": {"rich_text": [{"text": {"content": content[:2000]}}]},
+        "Content": {"rich_text": _rt(content)},
         "Last Updated": {"date": {"start": _now_iso(), "end": None}},
     }
     return client.pages.create(
@@ -81,12 +90,16 @@ def create_nugget(
 
 
 def get_open_commitments(database_id: Optional[str] = None) -> list:
-    """Fetch Open Commitments (items with Sovereign Tag = 'commitment' or similar)."""
+    """Fetch Open Commitments (commitment-like tags)."""
     return query_nexus(
         database_id=database_id,
         filter_obj={
-            "property": "Sovereign Tag",
-            "rich_text": {"contains": "commitment"},
+            "or": [
+                {"property": "Sovereign Tag", "rich_text": {"contains": "commitment"}},
+                {"property": "Sovereign Tag", "rich_text": {"contains": "task"}},
+                {"property": "Sovereign Tag", "rich_text": {"contains": "meeting"}},
+                {"property": "Sovereign Tag", "rich_text": {"contains": "decision"}},
+            ]
         },
         sorts=[{"property": "Priority", "direction": "descending"}],
     )
@@ -124,14 +137,32 @@ def get_recent_nuggets(limit: int = 10, database_id: Optional[str] = None) -> li
 
 def get_recent_thoughts(limit: int = 50, database_id: Optional[str] = None) -> list:
     """Fetch recent Thought Memory entries (Sovereign Tag contains 'thought'). Epic 5."""
+    return get_recent_by_tag("thought", limit=limit, database_id=database_id)
+
+
+def get_recent_by_tag(tag: str, limit: int = 50, database_id: Optional[str] = None) -> list:
+    """Fetch recent Nexus entries by Sovereign Tag substring (case-insensitive matching in Notion)."""
+    tag = (tag or "").strip()
+    if not tag:
+        return []
     return query_nexus(
         database_id=database_id,
         filter_obj={
             "property": "Sovereign Tag",
-            "rich_text": {"contains": "thought"},
+            "rich_text": {"contains": tag},
         },
         sorts=[{"timestamp": "last_edited_time", "direction": "descending"}],
     )[:limit]
+
+
+def get_recent_people_context(limit: int = 50, database_id: Optional[str] = None) -> list:
+    """Fetch recent People Context / conversation summary entries."""
+    return get_recent_by_tag("people-context", limit=limit, database_id=database_id)
+
+
+def get_recent_grandmas_closet(limit: int = 50, database_id: Optional[str] = None) -> list:
+    """Fetch recent deferred ideas from Grandma's Closet (Epic 6)."""
+    return get_recent_by_tag("grandmas-closet", limit=limit, database_id=database_id)
 
 
 def _get_prop(page: dict, name: str, kind: str = "plain") -> str:
@@ -152,7 +183,53 @@ def _get_prop(page: dict, name: str, kind: str = "plain") -> str:
         return ""
     if p.get("type") == "rich_text":
         rt = (p.get("rich_text") or [])
-        if rt and isinstance(rt[0], dict):
-            return (rt[0].get("plain_text") or "").strip()
-        return ""
+        if not rt:
+            return ""
+        parts = []
+        for node in rt:
+            if isinstance(node, dict):
+                parts.append(node.get("plain_text") or "")
+        return "".join(parts).strip()
     return ""
+
+
+def find_people_context_page(contact_key: str, database_id: Optional[str] = None) -> Optional[dict]:
+    """Find latest canonical people-context page for a contact key."""
+    key = (contact_key or "").strip()
+    if not key:
+        return None
+    pages = query_nexus(
+        database_id=database_id,
+        filter_obj={
+            "and": [
+                {"property": "Sovereign Tag", "rich_text": {"contains": "people-context"}},
+                {"property": "Context", "title": {"contains": key}},
+            ]
+        },
+        sorts=[{"timestamp": "last_edited_time", "direction": "descending"}],
+    )
+    return pages[0] if pages else None
+
+
+def update_page_fields(
+    page_id: str,
+    *,
+    context: Optional[str] = None,
+    content: Optional[str] = None,
+    priority: Optional[str] = None,
+    sovereign_tag: Optional[str] = None,
+) -> dict:
+    """Update selected Notion page properties."""
+    if not page_id:
+        raise ValueError("page_id is required")
+    client = get_client()
+    props = {"Last Updated": {"date": {"start": _now_iso(), "end": None}}}
+    if context is not None:
+        props["Context"] = {"title": [{"text": {"content": context[:2000]}}]}
+    if content is not None:
+        props["Content"] = {"rich_text": _rt(content)}
+    if priority is not None:
+        props["Priority"] = {"select": {"name": priority}}
+    if sovereign_tag is not None:
+        props["Sovereign Tag"] = {"rich_text": _rt(sovereign_tag)}
+    return client.pages.update(page_id=page_id, properties=props)

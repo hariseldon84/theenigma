@@ -52,6 +52,7 @@ Sovereign-Edge Cognitive Operating System — an ambient, proactive intelligence
 | `python -m enigma.main web` | Run Commitment Capture web app at http://127.0.0.1:5000 |
 | `python -m enigma.main brief` | Generate and deliver Sovereign Brief (email + Telegram if configured) |
 | `python -m enigma.main brief-only` | Generate Brief and print to stdout (no delivery) |
+| `python -m enigma.main closet-digest [days]` | Epic 6: Grandma's Closet digest (default 7 days) |
 | `python -m enigma.main thought-stitch` | Epic 5: themes/suggestions from Thought Memory |
 
 ### Commitment Capture (FR-2.2)
@@ -123,6 +124,18 @@ If `AUTH_REQUIRED` is unset or 0, the app runs without auth (single-user / local
 
 `GET http://127.0.0.1:5000/api/commitments` returns JSON list of open commitments (for Action Sphere / Epic 4).
 
+### Dashboard (Epic 7)
+
+Open `http://127.0.0.1:5000/dashboard` after login for sections:
+- Dashboard overview
+- Thoughts
+- Commitments
+- Conversations & Summaries
+- Grandma's Closet
+- Brief Archive
+- Life Query History
+- Import Chat (WhatsApp `.txt` / Telegram `.json` / `.html` / `.txt`)
+
 ---
 
 ## API reference
@@ -133,6 +146,14 @@ Base URL when running the web app: `http://127.0.0.1:5000`.
 |--------|------|-------------|--------------------|
 | **GET** | `/api/commitments` | Open Commitments for Action Sphere feed (FR-3.2) | No body. Returns `[{ "id", "context", "content", "tag" }, ...]`. |
 | **POST** | `/api/commitment` | Manual Commitment, People Context, or Thought (FR-2.2, FR-2.3, Epic 5) | `multipart/form-data`: `audio` (file), `type` (`commitment`, `people_context`, or `thought`). Returns `{ "id", "context", "preview", "tag" }`. |
+| **GET** | `/api/thoughts` | Epic 7 thoughts list | Returns recent Thought Memory entries. |
+| **GET** | `/api/conversations` | Epic 7 conversations list | Returns recent `people-context` summaries. |
+| **GET** | `/api/grandmas-closet` | Epic 6 deferred ideas list | Returns recent `grandmas-closet` entries. |
+| **POST** | `/api/grandmas-closet/save` | Epic 6 save deferred idea | JSON: `{ "content": string, "context"?: string }`. |
+| **GET** | `/api/grandmas-closet/digest?days=7` | Epic 6 digest | Weekly digest payload + items. |
+| **GET** | `/api/brief/archive` | Epic 7 brief archive | Returns locally archived briefs. |
+| **GET** | `/api/query/history` | Epic 7 Life Query history | Returns local Q&A history records. |
+| **POST** | `/api/import/chat` | Epic 8 chat import + re-import refresh | `multipart/form-data`: `platform` (`whatsapp`/`telegram`), `file`. Re-import updates one canonical People Context entry per contact. |
 | **GET** | `/api/brief/context` | Last delivered Sovereign Brief for Life Query follow-up (FR-3.4) | No body. Returns `{ "brief": "<text>" \| null }`. |
 | **POST** | `/api/query` | Life Query: RAG over Nexus + Commitments (FR-3.3) | JSON: `{ "question": string, "brief_context": string \| null }`. Returns `{ "answer": string }`. |
 | **POST** | `/api/query/voice` | Life Query via voice: transcribe then RAG (FR-3.3) | `multipart/form-data`: `audio` (file), optional `brief_context` (string). Returns `{ "question", "answer" }`. |

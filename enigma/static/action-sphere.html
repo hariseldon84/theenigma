@@ -50,6 +50,20 @@
       color: var(--text-muted);
       text-decoration: none;
     }
+    .sphere-header .login-link {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-right: 0.75rem;
+    }
+    .sphere-header .nav-link {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-right: 0.75rem;
+    }
+    .sphere-header .login-link:hover { color: var(--cerulean); }
+    .sphere-header .nav-link:hover { color: var(--cerulean); }
     .sphere-header .sign-out:hover { color: var(--cerulean); }
     .orb-wrap {
       margin: 1rem 0 2rem;
@@ -88,6 +102,11 @@
     .feed {
       width: 100%;
       max-width: 420px;
+      transition: box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .feed.focused {
+      box-shadow: 0 0 0 1px rgba(0, 163, 255, 0.35), 0 0 20px rgba(0, 163, 255, 0.15);
+      border-radius: 12px;
     }
     .feed-title {
       font-size: 0.7rem;
@@ -343,7 +362,11 @@
 <body>
   <div class="sphere-header">
     <h1>Action Sphere</h1>
-    <a href="#" id="sign-out" class="sign-out" style="display: none;">Sign out</a>
+    <div>
+      <a href="/dashboard" class="nav-link">Dashboard</a>
+      <a href="/login" id="login-link" class="login-link" style="display: none;">Login</a>
+      <a href="#" id="sign-out" class="sign-out" style="display: none;">Sign out</a>
+    </div>
   </div>
   <div class="orb-wrap">
     <button type="button" class="orb" id="orb" aria-label="Tap for commitments, long-press for Life Query">
@@ -407,16 +430,18 @@
   <script>
     (function () {
       var authCheckDone = false;
+      var authRequired = false;
       var originalFetch = window.fetch;
       window.fetch = function (url, opts) {
         var u = typeof url === 'string' ? url : (url && url.url);
+        var requestOpts = opts;
         if (u && u.indexOf('/api/') !== -1) {
           var token = localStorage.getItem('enigma_access_token');
-          opts = opts || {};
-          opts.headers = opts.headers || {};
-          if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+          requestOpts = requestOpts || {};
+          requestOpts.headers = requestOpts.headers || {};
+          if (token) requestOpts.headers['Authorization'] = 'Bearer ' + token;
         }
-        return originalFetch.apply(this, arguments).then(function (res) {
+        return originalFetch.call(this, url, requestOpts).then(function (res) {
           if (res.status === 401 && u && u.indexOf('/api/') !== -1) {
             localStorage.removeItem('enigma_access_token');
             localStorage.removeItem('enigma_refresh_token');
@@ -428,6 +453,7 @@
       function ensureAuth(cb) {
         if (authCheckDone) { if (cb) cb(); return; }
         originalFetch('/api/auth/config').then(function (r) { return r.json(); }).then(function (c) {
+          authRequired = !!(c && c.authRequired);
           authCheckDone = true;
           if (c.authRequired && !localStorage.getItem('enigma_access_token')) {
             window.location.href = '/login';
@@ -462,9 +488,16 @@
       var mediaRecorder = null;
       var chunks = [];
       var longPressTimer = null;
+      var longPressTriggered = false;
+      var orbPressStart = 0;
 
       var signOutEl = document.getElementById('sign-out');
-      if (signOutEl && localStorage.getItem('enigma_access_token')) {
+      var loginEl = document.getElementById('login-link');
+      var hasToken = !!localStorage.getItem('enigma_access_token');
+      if (loginEl && authRequired && !hasToken) {
+        loginEl.style.display = 'inline';
+      }
+      if (signOutEl && hasToken) {
         signOutEl.style.display = 'block';
         signOutEl.addEventListener('click', function (e) {
           e.preventDefault();
@@ -500,40 +533,71 @@
             feedError.style.display = 'block';
           });
       }
+      function openLifeQueryPanel() {
+        lifeQuery.classList.add('show');
+        lifeQuery.setAttribute('aria-hidden', 'false');
+      }
+      function focusCommitments() {
+        loadCommitments();
+        var feed = document.querySelector('.feed');
+        if (feed) {
+          feed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          feed.classList.add('focused');
+          setTimeout(function () { feed.classList.remove('focused'); }, 650);
+        }
+      }
+      function maybeSaveThoughtToCloset(captureResult) {
+        if (!captureResult || captureResult.tag !== 'thought') return Promise.resolve(false);
+        var save = window.confirm('Act now or save this thought to Grandma\'s Closet?\n\nClick OK to save for later.');
+        if (!save) return Promise.resolve(false);
+        return fetch('/api/grandmas-closet/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: captureResult.content || captureResult.preview || '',
+            context: "Grandma's Closet (from Thought)"
+          })
+        })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+          .then(function (_) {
+            if (!_.ok) {
+              throw new Error((_.data && _.data.detail) || 'Could not save to Grandma\'s Closet');
+            }
+            return true;
+          });
+      }
       function escapeHtml(s) {
         var div = document.createElement('div');
         div.textContent = s;
         return div.innerHTML;
       }
 
-      orb.addEventListener('click', function (e) {
-        e.preventDefault();
+      function clearLongPressTimer() {
         if (longPressTimer) {
           clearTimeout(longPressTimer);
           longPressTimer = null;
         }
-        document.querySelector('.feed') && document.querySelector('.feed').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-      orb.addEventListener('mousedown', function () {
+      }
+      orb.addEventListener('pointerdown', function () {
+        longPressTriggered = false;
+        orbPressStart = Date.now();
+        clearLongPressTimer();
         longPressTimer = setTimeout(function () {
-          longPressTimer = null;
-          lifeQuery.classList.add('show');
-          lifeQuery.setAttribute('aria-hidden', 'false');
-        }, 500);
+          longPressTriggered = true;
+          openLifeQueryPanel();
+        }, 550);
       });
-      orb.addEventListener('mouseup', function () { if (longPressTimer) clearTimeout(longPressTimer); longPressTimer = null; });
-      orb.addEventListener('mouseleave', function () { if (longPressTimer) clearTimeout(longPressTimer); longPressTimer = null; });
-      orb.addEventListener('touchstart', function (e) {
-        e.preventDefault();
-        longPressTimer = setTimeout(function () {
-          longPressTimer = null;
-          lifeQuery.classList.add('show');
-          lifeQuery.setAttribute('aria-hidden', 'false');
-        }, 500);
+      orb.addEventListener('pointerup', function () {
+        clearLongPressTimer();
       });
-      orb.addEventListener('touchend', function (e) {
+      orb.addEventListener('pointercancel', clearLongPressTimer);
+      orb.addEventListener('pointerleave', function () {
+        if (!longPressTriggered) clearLongPressTimer();
+      });
+      orb.addEventListener('click', function (e) {
         e.preventDefault();
-        if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+        if (longPressTriggered || (Date.now() - orbPressStart) > 520) return;
+        focusCommitments();
       });
 
       closeLifeQuery.addEventListener('click', function () {
@@ -698,6 +762,15 @@
                     var d = _.data;
                     if (_.ok) {
                       setCaptureStatus('Saved to Nexus' + (d.tag ? ' [' + d.tag + ']' : '') + ': "' + (d.preview || '').slice(0, 35) + '…"', 'success');
+                      maybeSaveThoughtToCloset(d)
+                        .then(function (saved) {
+                          if (saved) {
+                            setCaptureStatus('Thought saved to Grandma\'s Closet for later.', 'success');
+                          }
+                        })
+                        .catch(function (err) {
+                          setCaptureStatus('Thought captured, but Closet save failed: ' + err.message, 'error');
+                        });
                       loadCommitments();
                     } else {
                       var detail = d.detail;
@@ -735,12 +808,10 @@
               lqInput.placeholder = 'Ask a follow-up about your Sovereign Brief…';
               setLqStatus('Brief context loaded — ask a follow-up.');
             }
-            lifeQuery.classList.add('show');
-            lifeQuery.setAttribute('aria-hidden', 'false');
+            openLifeQueryPanel();
           })
           .catch(function () {
-            lifeQuery.classList.add('show');
-            lifeQuery.setAttribute('aria-hidden', 'false');
+            openLifeQueryPanel();
           });
       }
     })();

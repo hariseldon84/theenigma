@@ -1,6 +1,6 @@
 # Enigma OS — Development Tasks
 
-**Last updated:** 2026-03-10  
+**Last updated:** 2026-03-14  
 **Source:** docs/prd/, docs/mvp-roadmap.md
 
 ---
@@ -126,29 +126,62 @@
 
 ## Epic 6: Grandma's Closet (Post-MVP)
 
-- [ ] FR-6.1: Store deferred ideas with Sovereign Tag `grandmas-closet`
-- [ ] FR-6.2: UX: "Act now or save to Grandma's Closet?" after thought capture
-- [ ] FR-6.3: Weekly Grandma's Closet digest
-- [ ] FR-6.4: Life Query: "What's in my Grandma's Closet?"
+- [x] FR-6.1: Store deferred ideas with Sovereign Tag `grandmas-closet`
+- [x] FR-6.2: UX: "Act now or save to Grandma's Closet?" after thought capture
+- [x] FR-6.3: Weekly Grandma's Closet digest
+- [x] FR-6.4: Life Query: "What's in my Grandma's Closet?"
 
 ---
 
 ## Epic 7: User View (Web Dashboard) (Post-MVP)
 
-- [ ] FR-7.1: Web app — Dashboard, Thoughts, Commitments, Conversations, Grandma's Closet
-- [ ] FR-7.2: Brief archive + Life Query history
-- [ ] FR-7.3: Import Chat section — file picker for .txt (WhatsApp) / JSON (Telegram)
+- [x] FR-7.1: Web app — Dashboard, Thoughts, Commitments, Conversations, Grandma's Closet
+- [x] FR-7.2: Brief archive + Life Query history
+- [x] FR-7.3: Import Chat section — file picker for .txt (WhatsApp) / JSON (Telegram)
 
 ---
 
 ## Epic 8: Chat Import (Post-MVP)
 
-- [ ] FR-8.1: WhatsApp .txt parser — `[DD/MM/YYYY, HH:MM:SS] Sender: Message`
-- [ ] FR-8.1: Extract contact from filename, dedupe, LLM summarize → Nexus `people-context`
-- [ ] FR-8.2: Re-import: merge existing summary + new messages → single refreshed entry
-- [ ] FR-8.3: Telegram export parser (JSON/HTML/TXT)
+- [x] FR-8.1: WhatsApp .txt parser — `[DD/MM/YYYY, HH:MM:SS] Sender: Message`
+- [x] FR-8.1: Extract contact from filename, dedupe, LLM summarize → Nexus `people-context`
+- [x] FR-8.2: Re-import: merge existing summary + new messages → single refreshed entry
+- [x] FR-8.3: Telegram export parser (JSON/HTML/TXT)
 - [ ] FR-8.4: Optional: Telegram Takeout API AutoCapture
-- [ ] FR-8.5: Optional: "Remind me to export WhatsApp" in Brief
+- [x] FR-8.5: Optional: "Remind me to export WhatsApp" in Brief
+
+---
+
+## Epic 9: Recommendation Governance & Adaptive Planning (Post-MVP)
+
+- [ ] FR-9.1: Recommendation Inbox with explicit actions (`Accept`, `Modify`, `Defer`, `Reject`)
+- [ ] FR-9.2: Recommendation receipts (source trace, confidence, expected impact)
+- [ ] FR-9.3: Commitment Compiler from Gmail/Telegram/WhatsApp/voice/calendar
+- [ ] FR-9.4: Probabilistic due-date estimation with confidence bands
+- [ ] FR-9.5: Noise pruning via decision-value thresholds
+- [ ] FR-9.6: Mode-based recommendation aggressiveness (Focus/Routine/Recovery/Crisis)
+
+---
+
+## Epic 10: Health-Adaptive Cognitive Ops (Post-MVP)
+
+- [ ] FR-10.1: Apple Health / Google Fit / wearable integrations with explicit opt-in
+- [ ] FR-10.2: Health-informed planning as recommendations (no forced schedule changes)
+- [ ] FR-10.3: Vital-state work modes (`Deep`, `Collaborative`, `Admin`, `Recovery`)
+- [ ] FR-10.4: Burnout-risk detection + preventive intervention playbooks
+- [ ] FR-10.5: Recovery-first rescheduling + stakeholder communication drafts
+- [ ] FR-10.6: Health guardrails (non-clinical framing and policy boundaries)
+
+---
+
+## Epic 11: Trust, Compliance & Enterprise Readiness (Post-MVP)
+
+- [ ] FR-11.1: Policy-as-code checks for all AI recommendations/actions
+- [ ] FR-11.2: Evidence ledger for provenance of suggestions and outcomes
+- [ ] FR-11.3: "Red Team My Memory" audit mode with quarantine for unverifiable items
+- [ ] FR-11.4: Zero-trust context access controls
+- [ ] FR-11.5: Delegation and approval chains for high-risk actions
+- [ ] FR-11.6: Hybrid deployment options (cloud/private VPC/on-prem/regional)
 
 ---
 
@@ -169,9 +202,9 @@
 
 ## Suggested Order (Next Steps)
 
-1. **Epic 1:** Complete FR-1.2 (AES-256 for Vault) — quick win
-2. **Epic 2:** Omni-Scribe (FR-2.1) — core ingestion
-3. **Epic 3:** Sovereign Brief (FR-3.1) — core value
-4. **Epic 4:** Action Sphere UI — start Flutter/FlutterFlow scaffold
-5. **Epic 2:** Manual Commitment Capture (FR-2.2) — P1
-6. **Epic 3:** Life Query (FR-3.3) — P1
+1. **Epic 9 (FR-9.1/9.2/9.5):** Recommendation Inbox + receipts + noise pruning
+2. **Epic 9 (FR-9.3/9.4):** Commitment Compiler + confidence-based due dates
+3. **Epic 11 (FR-11.1/11.2):** Policy checks + evidence ledger for all recommendation actions
+4. **Epic 10 (FR-10.1/10.2):** Health connectors (opt-in) + recommendation-only health adaptation
+5. **Epic 10 (FR-10.3/10.4/10.5):** Vital-state modes + burnout prevention + recovery rescheduler
+6. **Epic 11 (FR-11.3/11.4/11.5/11.6):** Red-team audits + zero-trust + approvals + enterprise deployment modes

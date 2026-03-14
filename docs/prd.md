@@ -263,6 +263,39 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 - Manual: Export via Telegram Desktop → upload JSON/HTML/TXT → same flow as WhatsApp
 - AutoCapture (optional): User auth via Takeout API once → periodic sync to Nexus
 
+### 5.9 Epic 9: Recommendation Governance & Adaptive Planning
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| FR-9.1 | Recommendation Inbox with explicit actions (`Accept`, `Modify`, `Defer`, `Reject`) | P1 | All suggestions appear in one queue with user decision controls |
+| FR-9.2 | Recommendation receipts (source trace, confidence, expected impact) | P1 | Each suggestion includes explainability metadata |
+| FR-9.3 | Commitment Compiler builds daily task packages from integrations + voice | P1 | Task groups include owner, due date/confidence, dependency links |
+| FR-9.4 | Probabilistic due-date estimation with confidence bands | P2 | Tasks show date + confidence range |
+| FR-9.5 | Noise pruning via decision-value thresholds | P1 | Low-value recommendations are batched/summarized |
+| FR-9.6 | Mode-based recommendation aggressiveness (Focus/Routine/Recovery/Crisis) | P2 | Suggestion intensity adapts to user mode |
+
+### 5.10 Epic 10: Health-Adaptive Cognitive Ops
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| FR-10.1 | Integrate Apple Health / Google Fit / supported wearables (opt-in) | P2 | User can connect health sources with explicit consent |
+| FR-10.2 | Health-informed planning remains recommendation-only by default | P1 | No forced schedule/task changes without user approval |
+| FR-10.3 | Vital-state work modes (`Deep`, `Collaborative`, `Admin`, `Recovery`) | P2 | Prioritization and prompt cadence adapt by mode |
+| FR-10.4 | Burnout-risk detection and preventive playbooks | P2 | Enigma flags overload and proposes mitigation options |
+| FR-10.5 | Recovery-first rescheduling + stakeholder communication drafts | P2 | Health/workload signal can trigger safe re-plan recommendations |
+| FR-10.6 | Health guardrails (non-clinical framing and policy limits) | P1 | Product avoids medical claims outside certified modules |
+
+### 5.11 Epic 11: Trust, Compliance & Enterprise Readiness
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| FR-11.1 | Policy-as-code checks for all AI recommendations/actions | P1 | Runtime policy evaluation enforced before execution |
+| FR-11.2 | Evidence ledger for AI actions and recommendation outcomes | P1 | Every action has traceable provenance |
+| FR-11.3 | "Red Team My Memory" audit mode | P2 | User/admin can challenge outputs and quarantine unverifiable items |
+| FR-11.4 | Zero-trust context access model | P1 | Sensitive context access requires verified identity and posture |
+| FR-11.5 | Delegation and approval chains by risk tier | P2 | High-risk actions require configurable approvals |
+| FR-11.6 | Hybrid deployment options (cloud/private VPC/on-prem/regional) | P2 | Deployment choices support compliance/data residency |
+
 ---
 
 ## 6. Non-Functional Requirements
@@ -319,6 +352,13 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | US-14 | As a user, I want to import WhatsApp chat exports so Enigma adds People Context to Nexus | Chat Import |
 | US-15 | As a user, I want re-imports to update my existing context for that contact, not duplicate | Chat Import |
 | US-16 | As a user, I want to import Telegram exports or auto-sync via Takeout | Chat Import |
+| US-17 | As a user, I want Enigma suggestions in one inbox where I can Accept, Modify, Defer, or Reject | Recommendation Governance |
+| US-18 | As a user, I want to see source and confidence for each suggestion before deciding | Recommendation Governance |
+| US-19 | As a user, I want low-value interruptions suppressed and summarized | Recommendation Governance |
+| US-20 | As a user, I want health-informed scheduling recommendations from opt-in health signals | Health-Adaptive Cognitive Ops |
+| US-21 | As a user, I want health-based changes to remain recommendations, not forced actions | Health-Adaptive Cognitive Ops |
+| US-22 | As a team admin, I want all AI actions to be policy-checked and auditable | Trust/Compliance/Enterprise |
+| US-23 | As an enterprise user, I want approval chains for high-risk agent actions | Trust/Compliance/Enterprise |
 
 ---
 
@@ -345,6 +385,7 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 |----------|---------|
 | `basicidea.md` | Original vision, four pillars, design inspiration |
 | `docs/brainstorming-session-2026-03-10.md` | Constraint mapping, feature ideas, UX flows |
+| `bmad_output/brainstorming/brainstorming-session-2026-03-13-194750.md` | Expanded ideation and strategic tracks for Epics 9–11 |
 | `docs/mvp-roadmap.md` | Build order, priority tiers |
 | `docs/setup-phase1.md` | Notion + Supabase setup |
 
@@ -365,3 +406,4 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | 0.1 | 2026-03-10 | Product (BMAD-style) | Initial PRD from brainstorming + MVP roadmap |
 | 0.2 | 2026-03-10 | Product | Added in-depth sections: Information Debt, Omni-Scribe, Milan Minimalism |
 | 0.3 | 2026-03-10 | Product | Added Thought Memory (2.4), Grandma's Closet (2.5); Epics 5–8; Post-MVP scope; Chat Import workflow; User View; UX flows |
+| 0.4 | 2026-03-14 | Product | Added Epics 9–11 (Recommendation Governance, Health-Adaptive Ops, Trust/Compliance/Enterprise) and related user stories/dependencies |
