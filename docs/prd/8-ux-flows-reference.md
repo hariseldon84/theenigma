@@ -12,5 +12,9 @@
 | Chat import | Web Import Chat | Upload .txt (WhatsApp) or JSON (Telegram) | → Nexus People Context |
 | Re-import | Same contact | LLM merges new + existing summary | Single refreshed entry |
 | Deep work | (minimal) | Orb available but quiet | No interruption |
+| Focus execution (web) | Dashboard/Work module | Keep main task in center pane; open/collapse intelligence side pane | User stays in flow while context remains available on demand |
+| Recommendation triage | Recommendations pane/card | Accept, Edit, or Defer recommendation | User-controlled execution with auditable intent |
+| Mobile quick capture | Any mobile tab | Tap floating capture button | Fast thought/commitment/context capture without navigation friction |
+| Theme switching | Web/mobile settings | Toggle light/dark mode | Equivalent visual quality and readability in both themes |
 
 ---

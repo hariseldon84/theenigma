@@ -23,6 +23,7 @@
 | **Recommendation Governance** | Recommendation Inbox (Accept/Modify/Defer/Reject), explainability receipts, noise-pruned suggestion delivery |
 | **Health-Adaptive Cognitive Ops** | Apple Health/Google Fit opt-in connectors; health-informed recommendation-only scheduling with guardrails |
 | **Trust & Enterprise Readiness** | Policy-as-code checks, evidence ledger, zero-trust context access, enterprise deployment options |
+| **Premium UI/UX System (Web + Mobile)** | Premium warmth design language, typography system (`Sohne` + `Tiempos Text`), warm-neutral tokenized themes, contextual-pane web shell, mobile bottom-tab + floating capture/action model, refined motion grammar |
 
 ## 4.3 Out of Scope (MVP)
 

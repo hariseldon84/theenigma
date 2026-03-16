@@ -14,6 +14,7 @@
 | G8 | Govern AI recommendations with user sovereignty | Recommendation Inbox with Accept/Modify/Defer/Reject and explainability receipts |
 | G9 | Adapt execution to human energy and wellbeing | Health-informed planning suggestions with opt-in integrations and non-clinical guardrails |
 | G10 | Make Enigma enterprise-trust ready | Policy-as-code, evidence ledger, zero-trust access, and auditable agent actions |
+| G11 | Deliver a premium global SaaS-grade UI across web and mobile | Dual-mode parity, contextual-pane UX, and high-quality interaction/typography standards across core flows |
 
 ## 3.2 Business Goals
 
@@ -23,5 +24,6 @@
 | B2 | Establish Milan Minimalism as differentiated design language |
 | B3 | Prove tech stack (Notion + Supabase + Python + FlutterFlow + LLM) for rapid iteration |
 | B4 | Enable enterprise expansion through trust/compliance posture and measurable productivity outcomes |
+| B5 | Increase adoption and retention via a premium, differentiated UI/UX system that scales with enterprise expectations |
 
 ---

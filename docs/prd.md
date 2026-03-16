@@ -1,9 +1,9 @@
 # Enigma OS — Product Requirements Document
 
-**Version:** 0.3  
-**Date:** 2026-03-10  
+**Version:** 0.5  
+**Date:** 2026-03-16  
 **Status:** Draft  
-**Source:** basicidea.md, brainstorming-session-2026-03-10.md, mvp-roadmap.md
+**Source:** basicidea.md, brainstorming-session-2026-03-10.md, bmad_output/brainstorming/brainstorming-session-2026-03-13-194750.md, docs/prd/12-ui-ux-foundation.md, mvp-roadmap.md
 
 ---
 
@@ -129,6 +129,10 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | G5 | Capture thoughts and defer ideas | Thought Memory + Grandma's Closet; audio capture for both |
 | G6 | Provide unified view of all data | User View (Web Dashboard) with Thoughts, Commitments, Conversations, Grandma's Closet |
 | G7 | Ingest WhatsApp/Telegram for People Context | Manual import (WhatsApp); AutoCapture (Telegram via Takeout API) |
+| G8 | Govern AI recommendations with user sovereignty | Recommendation Inbox with Accept/Modify/Defer/Reject and explainability receipts |
+| G9 | Adapt execution to human energy and wellbeing | Health-informed planning suggestions with opt-in integrations and non-clinical guardrails |
+| G10 | Make Enigma enterprise-trust ready | Policy-as-code, evidence ledger, zero-trust access, and auditable agent actions |
+| G11 | Deliver a premium global SaaS-grade UI across web and mobile | Dual-mode parity, contextual-pane UX, and high-quality interaction/typography standards across core flows |
 
 ### 3.2 Business Goals
 
@@ -137,6 +141,8 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | B1 | Validate core value prop (commitment tracking + query) within 72-hour MVP |
 | B2 | Establish Milan Minimalism as differentiated design language |
 | B3 | Prove tech stack (Notion + Supabase + Python + FlutterFlow + LLM) for rapid iteration |
+| B4 | Enable enterprise expansion through trust/compliance posture and measurable productivity outcomes |
+| B5 | Increase adoption and retention via a premium, differentiated UI/UX system that scales with enterprise expectations |
 
 ---
 
@@ -162,6 +168,10 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | **User View (Web Dashboard)** | Dashboard, Thoughts, Commitments, Conversations & Summaries, Grandma's Closet, Brief archive, Life Query history |
 | **Chat Import (WhatsApp)** | Manual export + import; "Import Chat" in web; parser + dedupe; re-import updates latest context (no auto-append) |
 | **Chat Import (Telegram)** | Manual export + import; or AutoCapture via Takeout API (user auth once, periodic sync) |
+| **Recommendation Governance** | Recommendation Inbox (Accept/Modify/Defer/Reject), explainability receipts, noise-pruned suggestion delivery |
+| **Health-Adaptive Cognitive Ops** | Apple Health/Google Fit opt-in connectors; health-informed recommendation-only scheduling with guardrails |
+| **Trust & Enterprise Readiness** | Policy-as-code checks, evidence ledger, zero-trust context access, enterprise deployment options |
+| **Premium UI/UX System (Web + Mobile)** | Premium warmth design language, typography system (`Sohne` + `Tiempos Text`), warm-neutral tokenized themes, contextual-pane web shell, mobile bottom-tab + floating capture/action model, refined motion grammar |
 
 ### 4.3 Out of Scope (MVP)
 
@@ -296,6 +306,21 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | FR-11.5 | Delegation and approval chains by risk tier | P2 | High-risk actions require configurable approvals |
 | FR-11.6 | Hybrid deployment options (cloud/private VPC/on-prem/regional) | P2 | Deployment choices support compliance/data residency |
 
+### 5.12 Epic 12: Premium UI/UX System (Web + Mobile)
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| FR-12.1 | Establish premium design thesis ("enterprise trust + human warmth") across web and mobile | P1 | Product surfaces reflect a consistent premium tone in both themes and both form factors |
+| FR-12.2 | Typography system with `Sohne` (primary UI) and `Tiempos Text` (editorial accents) | P1 | Clear type hierarchy is defined and implemented; accent serif limited to section headers and key cards |
+| FR-12.3 | Warm-neutral tokenized color system (stone/ink + subtle copper/gold accents) | P1 | Design tokens implemented with semantic mappings for light and dark modes |
+| FR-12.4 | Dual-mode parity (light and dark are equal-quality experiences) | P1 | No component regressions between modes; contrast and visual hierarchy preserved |
+| FR-12.5 | Refined micro-interaction grammar (180-240ms) | P2 | Core transitions use consistent motion timing/easing and communicate state changes clearly |
+| FR-12.6 | Web shell with focus-first center pane + collapsible contextual intelligence pane | P1 | Context pane can open/collapse without obstructing primary execution flow |
+| FR-12.7 | Mobile shell with bottom tabs + floating capture/action button | P1 | Core flows are reachable within one to two taps; capture entry remains persistent |
+| FR-12.8 | Recommendation UX is suggestion-led (`Accept`, `Edit`, `Defer`) with explicit control | P1 | Users can act on recommendations without hidden automation or forced changes |
+| FR-12.9 | Responsive behavior and layout quality across desktop, tablet, and mobile breakpoints | P1 | Key workflows remain usable and visually consistent at defined breakpoints |
+| FR-12.10 | Enterprise UI quality guardrails (component consistency, interaction standards, accessibility) | P1 | Shared UI standards documented and validated in implementation reviews |
+
 ---
 
 ## 6. Non-Functional Requirements
@@ -307,6 +332,10 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | NFR-3 | Life Query response time | &lt;30s (LLM + RAG) |
 | NFR-4 | Data residency | Notion + Supabase (user-controlled) |
 | NFR-5 | Privacy | No auto-send; human-in-loop for drafts |
+| NFR-6 | Theme quality parity | Light and dark themes are both first-class with no major workflow regressions |
+| NFR-7 | Interaction quality | Primary UI transitions use refined motion patterns in the 180-240ms range |
+| NFR-8 | Accessibility baseline | Functional text and controls meet readable contrast and support reduced-motion preferences |
+| NFR-9 | Responsive reliability | Core workflows remain usable and visually consistent across desktop, tablet, and mobile breakpoints |
 
 ---
 
@@ -359,6 +388,11 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | US-21 | As a user, I want health-based changes to remain recommendations, not forced actions | Health-Adaptive Cognitive Ops |
 | US-22 | As a team admin, I want all AI actions to be policy-checked and auditable | Trust/Compliance/Enterprise |
 | US-23 | As an enterprise user, I want approval chains for high-risk agent actions | Trust/Compliance/Enterprise |
+| US-24 | As a user, I want Enigma web to keep my active work centered while side intelligence appears contextually | Premium UI/UX System |
+| US-25 | As a user, I want mobile navigation to stay simple with bottom tabs and a persistent capture action | Premium UI/UX System |
+| US-26 | As a user, I want recommendations presented as clear suggestions with explicit Accept/Edit/Defer choices | Premium UI/UX System |
+| US-27 | As a user, I want light and dark modes to feel equally premium and readable in daily use | Premium UI/UX System |
+| US-28 | As an enterprise buyer, I want the UI quality and consistency to match global SaaS expectations | Premium UI/UX System |
 
 ---
 
@@ -376,6 +410,10 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | Chat import | Web Import Chat | Upload .txt (WhatsApp) or JSON (Telegram) | → Nexus People Context |
 | Re-import | Same contact | LLM merges new + existing summary | Single refreshed entry |
 | Deep work | (minimal) | Orb available but quiet | No interruption |
+| Focus execution (web) | Dashboard/Work module | Keep main task in center pane; open/collapse intelligence side pane | User stays in flow while context remains available on demand |
+| Recommendation triage | Recommendations pane/card | Accept, Edit, or Defer recommendation | User-controlled execution with auditable intent |
+| Mobile quick capture | Any mobile tab | Tap floating capture button | Fast thought/commitment/context capture without navigation friction |
+| Theme switching | Web/mobile settings | Toggle light/dark mode | Equivalent visual quality and readability in both themes |
 
 ---
 
@@ -385,7 +423,8 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 |----------|---------|
 | `basicidea.md` | Original vision, four pillars, design inspiration |
 | `docs/brainstorming-session-2026-03-10.md` | Constraint mapping, feature ideas, UX flows |
-| `bmad_output/brainstorming/brainstorming-session-2026-03-13-194750.md` | Expanded ideation and strategic tracks for Epics 9–11 |
+| `bmad_output/brainstorming/brainstorming-session-2026-03-13-194750.md` | Expanded ideation and strategic tracks for Epics 9–12 |
+| `docs/prd/12-ui-ux-foundation.md` | Premium UI/UX direction lock-in (typography, color, motion, shell architecture) |
 | `docs/mvp-roadmap.md` | Build order, priority tiers |
 | `docs/setup-phase1.md` | Notion + Supabase setup |
 
@@ -407,3 +446,4 @@ Enigma OS moves beyond the traditional "App" model into an integrated OS layer t
 | 0.2 | 2026-03-10 | Product | Added in-depth sections: Information Debt, Omni-Scribe, Milan Minimalism |
 | 0.3 | 2026-03-10 | Product | Added Thought Memory (2.4), Grandma's Closet (2.5); Epics 5–8; Post-MVP scope; Chat Import workflow; User View; UX flows |
 | 0.4 | 2026-03-14 | Product | Added Epics 9–11 (Recommendation Governance, Health-Adaptive Ops, Trust/Compliance/Enterprise) and related user stories/dependencies |
+| 0.5 | 2026-03-16 | Product | Added dedicated Premium UI/UX direction: separate UI foundation doc, Epic 12 (Web + Mobile), and updates to goals, scope, NFRs, user stories, UX flows, dependencies, and tasks |

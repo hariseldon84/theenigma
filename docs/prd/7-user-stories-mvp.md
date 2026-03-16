@@ -47,5 +47,10 @@
 | US-21 | As a user, I want health-based changes to remain recommendations (not forced actions) | Health-Adaptive Cognitive Ops |
 | US-22 | As a team admin, I want every AI action to be traceable and policy-checked for auditability | Trust/Compliance/Enterprise |
 | US-23 | As an enterprise user, I want role-based approvals for high-risk agent actions | Trust/Compliance/Enterprise |
+| US-24 | As a user, I want Enigma web to keep my active work centered while side intelligence appears contextually | Premium UI/UX System |
+| US-25 | As a user, I want mobile navigation to stay simple with bottom tabs and a persistent capture action | Premium UI/UX System |
+| US-26 | As a user, I want recommendations presented as clear suggestions with explicit Accept/Edit/Defer choices | Premium UI/UX System |
+| US-27 | As a user, I want light and dark modes to feel equally premium and readable in daily use | Premium UI/UX System |
+| US-28 | As an enterprise buyer, I want the UI quality and consistency to match global SaaS expectations | Premium UI/UX System |
 
 ---

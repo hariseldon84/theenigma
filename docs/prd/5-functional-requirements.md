@@ -15,3 +15,4 @@ Epics are split into individual files for development:
 | **Epic 9: Recommendation Governance & Adaptive Planning** | [epic-9-recommendation-governance-adaptive-planning.md](./epics/epic-9-recommendation-governance-adaptive-planning.md) | Post-MVP |
 | **Epic 10: Health-Adaptive Cognitive Ops** | [epic-10-health-adaptive-cognitive-ops.md](./epics/epic-10-health-adaptive-cognitive-ops.md) | Post-MVP |
 | **Epic 11: Trust, Compliance & Enterprise Readiness** | [epic-11-trust-compliance-enterprise-readiness.md](./epics/epic-11-trust-compliance-enterprise-readiness.md) | Post-MVP |
+| **Epic 12: Premium UI/UX System (Web + Mobile)** | [epic-12-premium-ui-ux-system-web-mobile.md](./epics/epic-12-premium-ui-ux-system-web-mobile.md) | Post-MVP |

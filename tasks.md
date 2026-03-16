@@ -1,6 +1,6 @@
 # Enigma OS — Development Tasks
 
-**Last updated:** 2026-03-14  
+**Last updated:** 2026-03-16  
 **Source:** docs/prd/, docs/mvp-roadmap.md
 
 ---
@@ -185,6 +185,31 @@
 
 ---
 
+## Epic 12: Premium UI/UX System (Web + Mobile) (Post-MVP)
+
+- [ ] FR-12.1: Define and implement premium design thesis (enterprise trust + human warmth)
+- [ ] FR-12.2: Typography system: `Sohne` UI + `Tiempos Text` accents (section headers, key cards)
+- [ ] FR-12.3: Warm-neutral tokenized color system (stone/ink + subtle copper/gold accents)
+- [ ] FR-12.4: Dual-mode parity (light and dark are equal-quality and production-grade)
+- [ ] FR-12.5: Refined motion grammar across primary interactions (180-240ms)
+- [ ] FR-12.6: Web contextual pane shell (focus center + collapsible intelligence side pane)
+- [ ] FR-12.7: Mobile shell with bottom tabs + persistent floating capture/action button
+- [ ] FR-12.8: Recommendation interaction pattern (`Accept` / `Edit` / `Defer`) across web/mobile
+- [ ] FR-12.9: Responsive QA across desktop/tablet/mobile breakpoints
+- [ ] FR-12.10: UI consistency/accessibility quality gates for enterprise-ready UX
+
+---
+
+## Epic 13: Web & Mobile Flow (Mode-Based Shell) (Post-MVP)
+
+- [ ] FR-13.1: Define Flow-mode web screen inventory and navigation (WF-1–WF-8) as per [docs/prd/epics/epic-13-web-mobile-flow.md](docs/prd/epics/epic-13-web-mobile-flow.md).
+- [ ] FR-13.2: Define Control-mode web screen inventory and navigation (WC-1–WC-11) as per [docs/prd/epics/epic-13-web-mobile-flow.md](docs/prd/epics/epic-13-web-mobile-flow.md).
+- [ ] FR-13.3: Define mobile shell structure (tabs, mode toggle, capture FAB) and mobile screen stacks (MH-1–MMORE-3) as per [docs/prd/epics/epic-13-web-mobile-flow.md](docs/prd/epics/epic-13-web-mobile-flow.md).
+- [ ] FR-13.4: Map all FR-13.x screens to existing epics (4, 7, 9, 10, 11, 12) and update design/implementation owners.
+- [ ] FR-13.5: Produce Figma screen list and flow diagrams corresponding to the Epic 13 inventory (web + mobile), ready for detailed UI design under Epic 12.
+
+---
+
 ## Cross-Cutting
 
 ### DevOps & Ops
@@ -202,9 +227,11 @@
 
 ## Suggested Order (Next Steps)
 
-1. **Epic 9 (FR-9.1/9.2/9.5):** Recommendation Inbox + receipts + noise pruning
-2. **Epic 9 (FR-9.3/9.4):** Commitment Compiler + confidence-based due dates
-3. **Epic 11 (FR-11.1/11.2):** Policy checks + evidence ledger for all recommendation actions
-4. **Epic 10 (FR-10.1/10.2):** Health connectors (opt-in) + recommendation-only health adaptation
-5. **Epic 10 (FR-10.3/10.4/10.5):** Vital-state modes + burnout prevention + recovery rescheduler
-6. **Epic 11 (FR-11.3/11.4/11.5/11.6):** Red-team audits + zero-trust + approvals + enterprise deployment modes
+1. **Epic 12 (FR-12.1/12.2/12.3/12.6):** Design system baseline + typography/tokens + contextual pane shell
+2. **Epic 12 (FR-12.4/12.5/12.7/12.8/12.9):** Dual-mode polish + motion system + mobile shell + recommendation interaction + responsive QA
+3. **Epic 9 (FR-9.1/9.2/9.5):** Recommendation Inbox + receipts + noise pruning
+4. **Epic 9 (FR-9.3/9.4):** Commitment Compiler + confidence-based due dates
+5. **Epic 11 (FR-11.1/11.2):** Policy checks + evidence ledger for recommendation actions
+6. **Epic 10 (FR-10.1/10.2):** Health connectors (opt-in) + recommendation-only health adaptation
+7. **Epic 10 (FR-10.3/10.4/10.5):** Vital-state modes + burnout prevention + recovery rescheduler
+8. **Epic 11 (FR-11.3/11.4/11.5/11.6):** Red-team audits + zero-trust + approvals + enterprise deployment modes

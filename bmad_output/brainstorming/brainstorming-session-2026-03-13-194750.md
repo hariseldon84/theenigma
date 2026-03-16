@@ -11,6 +11,8 @@ selected_approach: 'progressive-flow'
 techniques_used: ['What If Scenarios','Mind Mapping','SCAMPER Method','Decision Tree Mapping']
 ideas_generated: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]
 context_file: ''
+session_continued: true
+continuation_date: '2026-03-14 08:13:26 '
 ---
 
 # Brainstorming Session Results
@@ -396,6 +398,158 @@ WORK module with governed multi-agent artifact production.
 Policy-as-code, evidence ledger, zero-trust, red-team memory.
 (Track G)
 
+## Continuation 2026-03-16 — Web + Mobile Flow Brainstorming
+
+**Focus:** Define a mode-based Web + Mobile flow (Flow vs Control) with enterprise-aware team views, then inventory candidate screens. This will later feed a dedicated "Web & Mobile Flow" epic with screen-level specs.
+
+### Directional Locks (from interactive Q&A)
+
+- **Web shell:** Option C — two modes, **Flow** and **Control**, sharing data but with different UX density.
+- **Mobile scope:** M2 — **full parity** with web flows (serious client, not just companion).
+- **Audience:** E2 — **enterprise-leaning**, with team/manager views and org-level controls.
+- **Data model:** Support both **bring-your-own Notion + Supabase** and **Enigma-hosted stack** per workspace.
+- **Mode nuance:**
+  - Flow vs Control should feel like **two modes of the same shell** (user rarely “leaves” Flow; Control feels like a config/review environment, not a separate app).
+  - On Flow surfaces, **team/manager views remain visible** via toggles, while Control mode offers deeper org dashboards and configuration.
+
+User responses for checkpoint 6:
+- 6.1 — Prefers **(a)**: two modes of same shell (shared spine, different density and intent).
+- 6.2 — Wants **team/manager views visible in Flow** and **Control toggle visible** as well (explicit affordance for switching).
+
+### Conceptual Mode Model
+
+- **Flow Mode (Doing / In the stream)**
+  - Purpose: execution, “what do I do next?”, in-the-moment capture and query.
+  - Tone: Milan Minimalism, low chrome, content cards; orb-centric interactions.
+  - Primary objects: Now/Next commitments, live recommendations, Life Query, capture, micro-timelines of activity.
+
+- **Control Mode (Config / Review / Admin)**
+  - Purpose: configure, review, audit, connect systems, and understand org/state over time.
+  - Tone: more traditional SaaS shell while preserving Milan Minimalism; navigation, tables, filters.
+  - Primary objects: connections, memory explorers, history, imports, recommendation policies, health connectors, org & roles.
+
+Global design principle: **Mode toggle is always available**, Flow remains the default mental home; Control is “where you go to tune the machine and explore the full graph.”
+
+### Web — Flow Mode Screen Families (Brainstorm)
+
+F1. **Flow Home (Orb + Today strip)**
+- Big orb, Obsidian background.
+- Surface at a glance:
+  - "Now" strip: top 3 commitments and 1–2 high-salience recommendation cards.
+  - "Next" teaser linking to a richer Today board.
+  - Micro-summary (counts for thoughts, people threads, closet items relevant today).
+- Interactions:
+  - Tap orb → scroll to commitments feed / Now+Next board.
+  - Long-press orb → open Life Query panel overlay.
+  - Swipe left → lightweight Recommendation Inbox slice (Flow view of Rec Inbox).
+  - Persistent capture FAB (mic) in bottom-right.
+
+F2. **Today Board (Commitments + Recommendations)**
+- Stacked or columnar view: "Must today", "Should this week", "Inbox".
+- Mixed cards: open commitments and recommendations, each with `Accept / Edit / Defer / Reject` controls.
+- Enterprise nuance: toggle for `My / Team / Org` view where permissions allow.
+
+F3. **Life Query Panel + Full View**
+- Panel: invoked from orb long-press for quick queries.
+- Full-screen view: richer answer context with:
+  - Pinned queries.
+  - Actions: "Create commitment", "Save as thought", "Link to person".
+  - Side context: last brief snippet, relevant people-context items, related closet ideas.
+
+F4. **Capture Flow (Overlay or Page)**
+- Modes: `Commitment`, `People`, `Thought` (later additional intents like `Idea → Closet`).
+- Live destination preview: shows where the captured item will land (e.g., Commitments board, Thought Memory, People Context for a contact).
+- Quick tagging: person/project selectors, timeframe chips.
+- After submit: clear CTAs like "Promote to Now", "Save to Closet", "Attach to project".
+
+F5. **Flow Inbox Slice**
+- Slim drawer version of Recommendation Inbox tuned for **high-signal** items only.
+- Accessible from Flow Home (swipe / icon) without leaving Flow.
+
+Optional Flow concepts (exploratory):
+- "Scenes" view clustering context around specific projects (e.g., "Q2 Launch" scene aggregating thoughts, commitments, people-context, queries).
+- Flow timeline showing recent Omni-Scribe pulses as a subtle horizontal strip.
+
+### Web — Control Mode Screen Families (Brainstorm)
+
+C1. **Control Home (Workspace Overview)**
+- Cards for:
+  - Connections health (Notion, Supabase, LLM, Auth) with state: BYO vs Enigma-hosted.
+  - Data volume & freshness: counts and recent activity.
+  - Recommendation system health: acceptance vs rejection trends.
+  - Org snapshot: active users, recent activity, team adoption.
+
+C2. **Connections & Tenancy**
+- Multi-workspace list:
+  - Columns for workspace name, deployment mode (BYO vs Enigma-hosted), region, status.
+- Detail view per workspace:
+  - Notion DB mapping, Supabase tables, encryption and keys, LLM provider choice.
+  - Wizard to add a workspace with branch:
+    - "Connect your own Notion + Supabase".
+    - "Use Enigma-managed infrastructure".
+
+C3. **Memory Explorer**
+- Tabs / segmented controls: `Thoughts`, `Commitments`, `Conversations`, `Closet`, `All Nuggets`.
+- Shared patterns: filters, search, batch actions like "promote to commitment", "move to closet", "merge", "link to person".
+
+C4. **Brief & Query History**
+- Brief archive list + detail:
+  - Show generated actions and which were accepted/completed.
+- Query history:
+  - List of questions and answers with source traces; ability to replay, refine, or convert to tasks.
+
+C5. **Chat Import & People Context Management**
+- Upload/re-upload workflows for WhatsApp and Telegram.
+- Per-contact status: last import, message volume, last summary refresh.
+- Deep links into People Context entries in Memory Explorer.
+
+C6. **Recommendation Governance**
+- Policy editor: thresholds, mode profiles, allowed/forbidden actions per risk band.
+- Evidence ledger view: timeline of recommendations, user decisions, and downstream outcomes.
+- "Red team my memory" entry for adversarial audits.
+
+C7. **Health & Modes Configuration**
+- Health connectors (Apple Health, wearables) with strict opt-in and guardrails.
+- Definition and tuning of work modes (`Deep`, `Collaborative`, `Admin`, `Recovery`) and how they modulate recommendation intensity.
+
+C8. **Org & Roles**
+- User/role management: User, Manager, Admin, Auditor.
+- Team-level views of commitments and memory domains (what is shared vs private).
+
+C9. **Settings**
+- Profile, notifications, theme, export/delete tools, security controls.
+
+### Mobile — Parity-Oriented Shell (Brainstorm)
+
+Structural decision: Mobile is a **serious client with near-full parity**, adapted for small screens and shorter sessions.
+
+Proposed bottom tabs:
+- `Home` — Mode-aware home (Flow/Control) with orb or overview.
+- `Inbox` — Recommendations + prioritized commitments.
+- `Memory` — Condensed Thoughts / Closet / Conversations views.
+- `Org` — Admin views for workspace, connections, imports (read-heavy, write-light).
+- `More` — Brief archive, Query history, settings, help.
+
+Global floating capture button:
+- Persistent mic FAB overlaying all tabs.
+- Same capture modes as web (Commitment/People/Thought), but in a tighter stepper UI.
+
+Example mobile stacks:
+- **Home tab:**
+  - Flow Home (orb + Now strip) → Today Board → Life Query full-screen.
+  - Mode toggle at top to show Control Home (workspace overview) instead.
+- **Inbox tab:**
+  - List of mixed recommendation/commitment cards → detail view → associated memory items.
+- **Memory tab:**
+  - Segmented control (Thoughts / Closet / Conversations) → list → detail.
+- **Org tab:**
+  - For admins: high-level workspace status, connectors, import statuses, with guarded edit affordances.
+- **More tab:**
+  - Brief archive and Query history → detail views; profile and settings entries.
+
+Key parity principle: any critical Flow or Control journey on web must have a **short, linear equivalent** on mobile, even if the UI is simplified.
+
+
 - **Program 5: Enterprise Expansion & Moat**
 Team operating layer + outcome pricing + marketplace + network flywheel.
 (Tracks F + J)
@@ -619,3 +773,237 @@ _Novelty_: Adds safety-first fail-closed behavior to agent operations.
 - Ownership model defined: Yes
 - KPI tree and risk controls defined: Yes
 - Ready for execution planning in product backlog: Yes
+
+## Session Extension: Dedicated UI/UX Ideation Block (Web + Mobile)
+
+### Extension Goal
+Design an enterprise-grade, sophisticated UI/UX direction for Enigma that feels comparable to leading global SaaS products while preserving Enigma's core principles (clarity, trust, explainability, low-friction action).
+
+### Extension Scope
+- Web application UX architecture (information hierarchy, navigation, views, workflows)
+- Mobile UX architecture (focus workflows, high-frequency interactions, notification and recommendation UX)
+- Design system direction (tokens, components, interaction standards, accessibility)
+- Trust and decision UX (recommendation governance, explainability, approvals)
+- UI ideas ready to map into PRD/epics/tasks
+
+### Execution Mode
+- Continue same brainstorming session
+- Progressive ideation for UI/UX as a dedicated sub-track
+- Capture ideas with the same structured format
+
+### Technique Execution (Extension Kickoff)
+- **Technique focus:** What If Scenarios (UI/UX angle)
+- **Status:** In progress
+- **Prompt launched:** "What if Enigma had an enterprise command-center web UI and a decisive mobile companion UI, each optimized for different decision horizons but sharing one trusted design language?"
+
+### UI/UX Discovery Checkpoint (Interactive, Before Locking Direction)
+
+#### Reference Benchmarks (Web-Verified)
+
+- Atlassian Design System (enterprise typography refresh, tokens, iconography):
+  - https://atlassian.design/whats-new/typography-and-iconography-updates/
+- IBM Carbon Typography (enterprise-readable, tokenized type hierarchy):
+  - https://carbondesignsystem.com/elements/typography/overview/
+- GitHub Primer Typography (product-grade scale + accessibility):
+  - https://primer.style/product/getting-started/foundations/typography/
+- Shopify Polaris Typography (admin UX hierarchy + data readability):
+  - https://polaris-react.shopify.com/design/typography
+- Salesforce SLDS 2 direction (enterprise UX modernization):
+  - https://www.salesforce.com/blog/what-is-slds-2/
+- Linear product interaction detail inspiration (precision micro-interactions):
+  - https://linear.app/now/invisible-details
+
+#### Discovery Focus Areas
+
+- Brand posture (authoritative enterprise vs warm premium vs hybrid)
+- Typography personality (neo-grotesk, humanist sans, editorial serif accent, mono usage)
+- Data density strategy (executive dashboards vs focus views)
+- Interaction tempo (calm and sparse vs high-information command center)
+- Mobile role split (companion quick-actions vs full operating console)
+
+#### Status
+
+- Discovery in progress: gathering founder preference signals before design lock.
+- Next: preference calibration round and moodboard direction selection.
+
+## Session Extension: Interactive UI/UX Calibration (Web + Mobile)
+
+**Date:** 2026-03-14
+**Goal:** Define a premium, enterprise-grade visual and interaction direction for Enigma before locking design specs.
+
+### Why this block
+The current UI is functionally progressing but visually basic. We need a sophisticated, globally competitive SaaS experience with stronger typography, hierarchy, navigation, and trust-signaling patterns across web and mobile.
+
+### Premium Benchmark Set (Web References)
+
+1. Atlassian Typography Foundation: https://atlassian.design/foundations/typography/
+2. Atlassian Typography/Iconography Updates: https://atlassian.design/whats-new/typography-and-iconography-updates/
+3. IBM Carbon Typography Overview: https://carbondesignsystem.com/elements/typography/overview/
+4. GitHub Primer Typography: https://primer.style/product/getting-started/foundations/typography/
+5. Vercel Geist Font: https://vercel.com/font/geist-mono
+6. Salesforce Design + SLDS 2 entry point: https://www.salesforce.com/design/
+7. Shopify Polaris (foundational system reference): https://polaris.shopify.com/
+
+### Design Direction Axes for Interactive Decision-Making
+- **Tone axis:** Minimal precision vs warm premium
+- **Density axis:** Data-dense control room vs calm spacious cockpit
+- **Motion axis:** Utility-only motion vs cinematic micro-storytelling
+- **Color axis:** Neutral enterprise base vs distinct brand-led accents
+- **Navigation axis:** Left-rail workbench vs command palette-first navigation
+
+### Next Step in Session
+Run a focused preference-calibration round and convert outputs into:
+- Web and mobile visual principles
+- Font stack decision candidates
+- Layout and interaction rules
+- Story-ready items for PRD and epics
+
+### Interactive Calibration Outcome (User Confirmed)
+
+**Core Style Direction**
+- Premium Warmth (editorial + human)
+
+**Font Personality**
+- Humanist sans (approachable, sophisticated)
+
+**Web Shell**
+- Contextual panes (focus mode + collapsible side intelligence)
+
+**Mobile UX**
+- Bottom tabs + floating capture/action button
+
+**Motion Level**
+- Refined premium micro-interactions
+
+**Theme Baseline**
+- Dual-mode with equal quality
+
+### Design Thesis v1 (Derived from Calibration)
+
+Enigma should present as a premium cognitive workspace that blends enterprise trust with human warmth. The interface language should feel editorial and intentional rather than purely utilitarian, while preserving strong information hierarchy for high-frequency operational use.
+
+### Experience Principles (Web + Mobile)
+
+1. Warm Precision
+Use a soft, human visual tone without sacrificing clarity, auditability, or control.
+
+2. Focus-First Layouting
+Primary tasks stay central; side intelligence appears contextually, collapses cleanly, and never overwhelms active work.
+
+3. Recommendation-Centric Interaction
+System guidance should be suggestion-led with explicit user accept/revise actions, not hard enforcement.
+
+4. Equal-Quality Dual Theme
+Light and dark modes must both feel first-class with no “secondary” visual quality.
+
+5. Premium Motion Discipline
+Use subtle transitions, staged reveals, and high-quality easing to communicate hierarchy/state changes, never decorative over-animation.
+
+### Initial UX Architecture Direction
+
+**Web**
+- Main focus pane for commitments, dashboard views, and work outputs
+- Collapsible intelligence pane for life query, recommendations, risk flags, and context traces
+- Mode-aware surfaces (capture, review, execute, reflect) with lightweight transitions
+
+**Mobile**
+- Bottom-tab navigation for core modules (Home, Commitments, Work, Query, Profile)
+- Floating capture/action button for one-tap thought/voice/context capture
+- Compact recommendation cards with Accept / Edit / Defer controls
+
+### Font Direction (Shortlist Intent)
+
+Primary intent is humanist sans-led UI with optional editorial accent usage for headings/hero moments only. Next step: lock final font pairings for licensing, web performance, and cross-platform consistency.
+
+### Typography Lock-In (User Decision)
+
+**Selected Font Direction**
+- Highly premium modern humanist
+- `Söhne` for primary UI typography
+- `Tiempos Text` for editorial accent moments
+
+**Rationale Captured**
+- Preserves enterprise-grade legibility while adding a distinct premium, human voice
+- Supports the "warm precision" principle by separating functional UI language from narrative/emphasis surfaces
+- Aligns well with contextual-pane layouts where hierarchy clarity and emotional tone must coexist
+
+### Next Design Calibration Block
+
+Proceed to define:
+- Type scale and reading rhythm (web + mobile)
+- Tokenized color system for dual-mode parity
+- Motion grammar for premium micro-interactions
+- Component hierarchy rules for focus pane vs side intelligence pane
+
+### Calibration Round 2 Outcome (User Confirmed)
+
+**Type Scale Density**
+- Balanced enterprise
+
+**Accent Serif Usage (`Tiempos Text`)**
+- Section headers + key cards
+
+**Color Mood**
+- Warm neutral (stone/ink base with subtle gold/copper accents)
+
+**Motion Profile**
+- Refined transitions in the 180-240ms range
+
+### UI/UX Spec Baseline v1 (Build-Ready Direction)
+
+#### 1) Typography System
+
+- Primary UI font: `Söhne`
+- Accent font: `Tiempos Text`
+- Density: balanced enterprise (clear hierarchy without oversized editorial spacing)
+- Usage rule:
+  - `Söhne` for navigation, controls, forms, tables, data cards, and dense dashboards
+  - `Tiempos Text` only for section headers and selected key insight cards
+- Accessibility:
+  - Maintain high readability in both light/dark modes
+  - Preserve minimum contrast standards for functional text and controls
+
+#### 2) Color Token Direction (Warm Neutral)
+
+- Base palette intent:
+  - Stone/linen neutrals for surfaces
+  - Ink/charcoal for primary text and structure
+  - Subtle copper/gold accents for emphasis, premium highlights, and status accents
+- Dual-mode parity:
+  - Dark mode is a first-class design, not an inverted fallback
+  - Accent behavior remains premium and restrained in both themes
+- Semantic tone:
+  - Success/warning/error colors should harmonize with warm neutral base, not feel disconnected
+
+#### 3) Motion Grammar
+
+- Global interaction timing band: 180-240ms
+- Motion style: refined, low-noise, hierarchy-revealing
+- Preferred patterns:
+  - Context pane collapse/expand with smooth easing
+  - Card elevation/focus transitions on interaction
+  - Gentle staggered reveals for dashboard sections
+- Avoid:
+  - Decorative motion that competes with operational tasks
+  - High-amplitude transitions for routine actions
+
+#### 4) Web Shell Behavior (Contextual Panes)
+
+- Primary focus pane remains visually dominant for active tasks
+- Side intelligence pane is collapsible, contextual, and non-intrusive
+- Pane rules:
+  - Surface recommendations, context traces, risk signals, and life query support
+  - Never obstruct primary execution flow
+  - Maintain consistent width logic and smooth transition states
+
+#### 5) Mobile Shell Behavior
+
+- Navigation: bottom tabs for core modules
+- Floating action button: always-available capture/action entry
+- Recommendation UX:
+  - Recommendation cards with explicit `Accept / Edit / Defer`
+  - Suggestion-led, human-in-the-loop behavior by default
+
+#### 6) Product Positioning Signal Through UI
+
+The UI should communicate "enterprise trust with human warmth." Functional precision and explainable recommendation mechanics remain central, while typography, tone, and motion elevate the product into a premium global SaaS experience.
