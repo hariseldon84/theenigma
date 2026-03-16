@@ -2,7 +2,7 @@
 
 Sovereign-Edge Cognitive Operating System — an ambient, proactive intelligence layer that reduces Information Debt (the gap between owned data and the ability to retrieve or act on it).
 
-**Stack:** Notion (The Nexus) + Supabase (The Vault) + Python orchestration. See [docs/prd/](docs/prd/) for the full PRD.
+**Stack:** Notion (The Nexus) + Supabase (The Vault) + Python orchestration. See [docs/prd/](docs/prd/) for the full PRD, including UI/UX foundation and Web/Mobile flow epics.
 
 ---
 
@@ -169,7 +169,7 @@ All POST endpoints return JSON errors with `detail` on failure (4xx/5xx).
 | [docs/setup-phase1.md](docs/setup-phase1.md) | Notion + Supabase + Python setup |
 | [docs/ui-testing-guide.md](docs/ui-testing-guide.md) | UI-level testing — Action Sphere, Life Query, capture, follow-up |
 | [docs/v1-web-roadmap.md](docs/v1-web-roadmap.md) | V1 web roadmap — deploy, UI polish, dashboard, Thought Memory, Chat Import |
-| [docs/prd/](docs/prd/) | Product requirements (sharded) |
+| [docs/prd/](docs/prd/) | Product requirements (sharded), including Epic 12 UI/UX foundation and Epic 13 Web/Mobile flow |
 | [docs/mvp-roadmap.md](docs/mvp-roadmap.md) | MVP build order |
 | [tasks.md](tasks.md) | Development task list |
 | [cardinal_rules.md](cardinal_rules.md) | Development rules (architecture, SaaS-ready) |
