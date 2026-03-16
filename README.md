@@ -1,4 +1,4 @@
-# Enigma OS - Test Push
+# Enigma OS
 
 Sovereign-Edge Cognitive Operating System — an ambient, proactive intelligence layer that reduces Information Debt (the gap between owned data and the ability to retrieve or act on it).
 
